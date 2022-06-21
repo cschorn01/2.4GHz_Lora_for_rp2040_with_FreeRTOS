@@ -175,7 +175,7 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
     rampTime 0x00: 2um 0x20: 4us 0x40: 5us 0x60: 8us 
             0x80: 10us 0xA0: 12us 0xC0: 16us 0xE0: 20us
     return( void ) */
-#de:wfine SETTXPARAMS 0x8E
+#define SETTXPARAMS 0x8E
 
 /*  Sets number of symbols which Channel Activity Detected operates
     For symbols 1 & 2, there are higher risks of false detection.
