@@ -370,8 +370,24 @@ void vSx1280Task( void *pvParameters ){
     /* Instantiating pointer to hold the addresses of messages
             waiting to be sent out by sx1280 */
     uint32_t *messageStorageTillUse;
-    messageStorageTillUse = ( uint32_t * ) malloc( 1*sizeof( uint32_t ) );
-    uint32_t messageStorageCounter = 0;
+    messageStorageTillUse = ( uint32_t * ) malloc( 10*sizeof( uint32_t ) );
+    /* Looping through the messageStorageTillUse to instantiate each memory block as 0
+       0 will be placed in a memory block when it is useable */
+    for( uint32_t i = 0; i <= 9; i++ ){
+        *( messageStorageTillUse + i ) = 0;
+    }
+    /* 8 bit integer holding a boolean value
+       If value is 1 this asserts that messageStorageTillUse is empty
+       If value is 0 this asserts that messageStorageTillUse is not empty, signifying 
+            there is at least one message in messageStorageTillUse and a message is ready to send  */
+    uint8_t isMessageStorageTillUseEmpty = 1;
+    /*uint32_t messageStorageCounter = 0;*/
+
+    /* Holder variable used in rx operation
+       Used to hold the size of any newly received message on the sx1280's buffer
+       Needed because of the inability to see a pointer array's size while it is empty
+            A newline character is usually used in this code as an end of array signifier */
+    uint8_t sizeOfMessageInBuffer = 0;
     
     /* Setting up Busy Pin */
 
@@ -386,13 +402,13 @@ void vSx1280Task( void *pvParameters ){
     /* Setting up Reset Pin */
 
     /* Initializing GP9 to output pin for Reset */
-    gpio_init( 9 );
+    gpio_init( 21 );
     /* Setting GP9 direction to output, True is out False is in */
-    gpio_set_dir( 9, 1 );
+    gpio_set_dir( 21, 1 );
     /* static void gpio_put (uint gpio, bool value)
        Driving GP9 High
        A resit is initiated by driving Reset Low */
-    gpio_put( 9, 1 );
+    gpio_put( 21, 1 );
 
     /* Setting up SPI1 Interface */
 
@@ -447,14 +463,15 @@ void vSx1280Task( void *pvParameters ){
             printf("taskNotificationFromUSB = %X\n", *( taskNotificationFromUSB ));
         }*/
 
-        if( *( taskNotificationFromUSB ) != 0 ){
-            *( messageStorageTillUse + messageStorageCounter ) = *( taskNotificationFromUSB );
+        /* if( *( taskNotificationFromUSB ) != 0 ){
+            *( messageStorageTillUse + messageStorageCounter ) = *( taskNotificationFromUSB );*/
             /*printf("messageStorage = %X\n", *( messageStorageTillUse + messageStorageCounter ) );*/
-            messageStorageCounter++;
+            /*messageStorageCounter++;
             messageStorageTillUse = ( uint8_t * ) realloc( messageBuffer, ( messageCounter+1 )*sizeof( uint8_t ) );
-        }
+        }*/
 
-        if( messageStorageCounter == 4 ){
+
+        /*if( messageStorageCounter == 4 ){
             for(uint32_t i = 0; i<messageStorageCounter; i++){
                 printf( "%X\n",  *( messageStorageTillUse + i ) );
                 uint8_t j = 0;
@@ -469,18 +486,35 @@ void vSx1280Task( void *pvParameters ){
             messageStorageCounter = 0;
             free( messageStorageTillUse );
             messageStorageTillUse = ( uint8_t * ) malloc( 1 * sizeof( uint8_t ) );
-            /*printf("hi");*/
+        }*/
+
+        /* Loop checking to see if messageStorageTillUse is empty
+           If there is something in messageStorageTillUse then isMessageStorageTillUseEmpty
+                will be changed to 0 (False) */
+        for( uint32_t i = 0; i <= 9 ; i++ ){
+
+            if( *( messageStorageTillUse + i ) == 0 && *( taskNotificationFromUSB ) != 0 ){
+                *( messageStorageTillUse + i ) = *( taskNotificationFromUSB );
+                isMessageStorageTillUseEmpty = 0; /* asserting that messageStorageTillUse is no longer empty */ 
+            }
+            /* May need an else if later for if the messageStorageTillUse gets full
+               If the array gets full there is a problem
+                    The problem would be that the system made a mistake in allocating
+                        too much data to the array
+                    If messageStorageTillUse becomes full it would most likely mean that
+                        the owner of the radio is receiveing more messages than can be handled
+                        or the mesh is requesting more data throughput than can be handled
+                        and is causing a backup in radio processor memory */
         }
 
         free( taskNotificationFromUSB );
 
-        /* Driving pin 9 low to reset the sx1280 */
-        gpio_put( 9, 0 );
+        /* Driving pin 21 low to reset the sx1280 */
+        gpio_put( 21, 0 );
         asm volatile ("nop \n nop \n nop");
-        gpio_put( 9, 1 );
+        gpio_put( 21, 1 );
 
         /* Setting sx1280 mode to STDBY_RC */
-
         writeData = ( uint8_t * ) malloc( 2*sizeof( uint8_t ) );
         *( writeData ) = SETSTANDBY;
         /* Setting to STDBY_RC Mode
@@ -493,7 +527,6 @@ void vSx1280Task( void *pvParameters ){
         free( writeData );
 
         /* Setting sx1280 Packet Type to Lora */
-
         writeData = ( uint8_t * ) malloc( 2*sizeof( uint8_t ) );
         *( writeData ) = SETPACKETTYPE;
         *( writeData + 1 ) = 0x01;
@@ -504,7 +537,6 @@ void vSx1280Task( void *pvParameters ){
 
         /* Setting RF Frequency
            Following sx1280 Guide SPI Example here to 2.4GHz */
-
         writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
         *( writeData ) = SETRFFREQUENCY;
         *( writeData + 1 ) = 0xB8; /* rfFrequency[23:16] */
@@ -516,8 +548,7 @@ void vSx1280Task( void *pvParameters ){
         free( writeData );
 
         /* Setting Tx and Rx Buffer Base Addresses
-           Putting both at 0 since messages can be size of buffer
-           Changed to 1 for testing, cannot read buffer at moment */
+           Putting both at 0 since messages can be size of buffer */
 
         writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
         *( writeData ) = SETBUFFERBASEADDRESS;
@@ -530,7 +561,6 @@ void vSx1280Task( void *pvParameters ){
 
         /* Setting the Modulation Params
            Following sx1280 Guide SPI Exampes here */
-
         writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
         *( writeData ) = SETMODULATIONPARAMS;
         *( writeData + 1 ) = 0x70; /* Spreading Factor 7 (SF7) */
@@ -563,7 +593,6 @@ void vSx1280Task( void *pvParameters ){
 
         /* Setting Packet Params
            Following the sx1280 Guide SPI Example */
-
         writeData = ( uint8_t * ) malloc( 8*sizeof( uint8_t ) );
         *( writeData ) = SETPACKETPARAMS;
         *( writeData + 1 ) = 0x0C; /* Preamble Length */
@@ -582,19 +611,18 @@ void vSx1280Task( void *pvParameters ){
                 and reading from buffer
            Working, output should be "status status FF" and is */
 
-        writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
+        /* writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
         *( writeData ) = WRITEBUFFER;
         *( writeData + 1 ) = 0x00;
         *( writeData + 2 ) = 0xFF;
         sx1280Select();
         spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
         sx1280Deselect();
-        free( writeData );
+        free( writeData ); */
 
         /* Must use two NOP's for reads because data is
-                returned beginning on the second NOP
-           Still only returning 0's */
-        readData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
+                returned beginning on the second NOP */
+        /* readData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
         writeData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
         *( writeData ) = READBUFFER;
         *( writeData + 1 ) = 0x00;
@@ -602,38 +630,34 @@ void vSx1280Task( void *pvParameters ){
         *( writeData + 3 ) = 0x00;
         *( writeData + 4 ) = 0x00;
         sx1280Select();
-        /* spi_write_read_blocking( spi_inst_t *spi,
-                                        const uint8_t *src,
-                                        uint8_t *dst,
-                                        size_t len ) */
         spi_write_read_blocking( spi1, writeData, readData, 5*sizeof( uint8_t ) );
-        sx1280Deselect();
+        sx1280Deselect(); */ 
         /*printf( "%X %X %X %X %X\n", *( readData ), *( readData + 1 ), *( readData + 2 ), *( readData + 3 ), *( readData + 4 ) );*/
-        free( writeData );
-        free( readData );
+        /* free( writeData );
+        free( readData ); */
 
         /* Mesh below */
 
-        /* if( messageStorageTillUse is empty || neighbors unavailable to receive messages ){
+         if( isMessageStorageTillUseEmpty == 1 ){ /*|| neighbors unavailable to receive messages ){*/
 
-            //setting the tx parameters necessary for sending a message
+            /* Setting the tx parameters necessary for sending a message */
             writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
             *( writeData ) =  SETTXPARAMS;
-            *( writeData + 1 ) = 0x1A;
-            *( writeData + 2 ) = 0xE0;
+            *( writeData + 1 ) = 0x1A; // power
+            *( writeData + 2 ) = 0xE0; // rampTime
             sx1280Select();
             spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
             sx1280Deselect();
             free( writeData );
- 
+
             //send message with radio's public address and general ready to receive status
             //uint8_t messageSizeCount = 0; //can't access size of pointer array, must keep count
             //while( ( uint8_t * ) *( *( messageStorageTillUse + messageStorageCounter ) + messageSizeCount ) != 0x0A ) for accessing each of the 4 messages in the current messageStorageTillUse memory scheme, and knowing the size of each message as they are being used for dynamic memory allocation
 
-            //writing the general ready to recieve message to the sx1280 message buffer
+            /* writing the general ready to recieve message to the sx1280 message buffer */
             writeData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
             *( writeData ) = WRITEBUFFER;
-            *( writeData + 1) = 0x52; //RTRG (Ready To Recieve General)
+            *( writeData + 1 ) = 0x52; /* RTRG (Ready To Recieve General) */
             *( writeData + 2 ) = 0x54;
             *( writeData + 3 ) = 0x52;
             *( writeData + 4 ) = 0x47;
@@ -642,73 +666,252 @@ void vSx1280Task( void *pvParameters ){
             sx1280Deselect();
             free( writeData );
 
-            //figure out DIO IRQ params, may need to use the TX Done, rx done, etc
-            //seems possible to use GETIRQSTATUS over spi instead of DIO pins
-            //can loop GETIRQSTATUS with a vTaskDelay(n) until Tx done is flagged
+            /* seems possible to use GETIRQSTATUS over spi instead of DIO pins
+               can loop GETIRQSTATUS with a vTaskDelay(n) until Tx done is flagged */
 
-            //setting IRQ parameters for the general ready to receive outgoing message
+            /* setting IRQ parameters for the general ready to receive outgoing message */
             writeData = ( uint8_t * ) malloc( 9*sizeof( uint8_t ) );
             *( writeData ) = SETDIOIRQPARAMS;
-            *( writeData + 1 ) = 0x40; // IRQ Mask for bits 15:8 of IRQ register, allowing RxTxTimeout
-            *( writeData + 2 ) = 0x01; // IRQ Mask for bits 7:0 of IRQ register, allowing TxDone
-            *( writeData + 3 ) = 0x00; // setting DIO 1 Mask bits 15:8 to 0
-            *( writeData + 4 ) = 0x00; // setting DIO 1 Mask bits 7:0 to 0
-            *( writeData + 5 ) = 0x00; // setting DIO 2 Mask bits 15:8 to 0
-            *( writeData + 6 ) = 0x00; // setting DIO 2 Mask bits 7:0 to 0
-            *( writeData + 7 ) = 0x00; // setting DIO 3 Mask bits 15:8 to 0
-            *( writeData + 8 ) = 0x00; // setting DIO 3 Mask bits 7:0 to 0
+            *( writeData + 1 ) = 0x40; /* IRQ Mask for bits 15:8 of IRQ register, allowing RxTxTimeout */
+            *( writeData + 2 ) = 0x01; /* IRQ Mask for bits 7:0 of IRQ register, allowing TxDone */
+            *( writeData + 3 ) = 0x00; /* setting DIO 1 Mask bits 15:8 to 0 */
+            *( writeData + 4 ) = 0x00; /* setting DIO 1 Mask bits 7:0 to 0 */
+            *( writeData + 5 ) = 0x00; /* setting DIO 2 Mask bits 15:8 to 0 */
+            *( writeData + 6 ) = 0x00; /* setting DIO 2 Mask bits 7:0 to 0 */
+            *( writeData + 7 ) = 0x00; /* setting DIO 3 Mask bits 15:8 to 0 */
+            *( writeData + 8 ) = 0x00; /* setting DIO 3 Mask bits 7:0 to 0 */
             sx1280Select();
             spi_write_blocking( spi1, writeData, 9*sizeof( uint8_t ) );
             sx1280Select();
             free( writeData );
 
-            //setting sx1280 to transmit mode to send the message in sx1280's message buffer
+            /* setting sx1280 to transmit mode to send the message in sx1280's message buffer */
             writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
-            *( writeData ) = SETRX;
-            *( writeData + 1 ) = 0x02; // setting periodBase to 1ms, RTC step
-            *( writeData + 2 ) = 0x01; // setting periodBaseCount[15:0] to 500
-            *( writeData + 3 ) = 0xF4; // timeout is periodBase * periodBaseCount
+            *( writeData ) = SETTX;
+            *( writeData + 1 ) = 0x02; /* setting periodBase to 1ms, RTC step */
+            *( writeData + 2 ) = 0x01; /* setting periodBaseCount[15:0] to 500 */
+            *( writeData + 3 ) = 0xF4; /* timeout is periodBase * periodBaseCount */
             sx1280Select();
             spi_write_blocking( spi1, writeData, 4*sizeof( uint8_t ) );
             sx1280Deselect();
             free( writeData );
 
-            //checking the IRQ register through the spi connection
-            //may need to loop over this, with vTaskDelay, till the TxDone bit is positive
-            writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
-            readData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
-            *( writeData ) = GETIRQSTATUS;
-            *( writeData + 1 ) = 0x00;
-            *( writeData + 2 ) = 0x00;
-            *( writeData + 3 ) = 0x00;
-            sx1280Sselect();
-            spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
-            sx1280Deselect();
-            free( writeData );
-            free( readData );
+            /* checking the IRQ register through the spi connection
+               Looping over GETIRQSTATUS, with vTaskDelay, till the TxDone bit is positive
+               Will most likely put this loop onto a pio state machine to save power, and processing time */
+            for( uint32_t i = 0; i <= 100; i++){
 
-            // clearing the IRQ register, reseting IRQ Mask bits to 0
+                vTaskDelay( 50 );
+
+                writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
+                readData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
+                *( writeData ) = GETIRQSTATUS;
+                *( writeData + 1 ) = 0x00;
+                *( writeData + 2 ) = 0x00;
+                *( writeData + 3 ) = 0x00;
+                sx1280Select();
+                spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
+                sx1280Deselect();
+                
+                printf("IRQ Check: %X\n", *( readData + 3 ) );
+
+                /* checking to see if the TxDone bit in the IRQ register is high
+                   Doing a bitwise 'and' operation with 0x01 to mask the rest of the bits in the IRQ register,
+                        giving a clear indication that a message has been sent */
+                if( ( *( readData + 3 ) & 0x01 ) == 0x01 ){ /* GETIRQSTATUS TxDone == 1 */
+
+                    /* Once message is sent move on to rx mode to upkeep network 
+                       test this to see if the message is actually being sent, the loop skip issue 
+                            in rx part may not be an actual issue printf is weird on rp2040 */
+                    printf("IRQ: %X\n", *( readData + 3 ) );
+                    break;
+
+                }
+
+                free( writeData );
+                free( readData );
+
+            }
+
+            /* clearing the IRQ register, reseting IRQ Mask bits to 0 */
             writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
             *( writeData ) = CLRIRQSTATUS;
-            *( writeData + 1 ) = 0xFF; // clearing bits 15:8 of IRQ mask
-            *( writeData + 2 ) = 0xFF; // clearing bits 7:0 of IRQ mask
+            *( writeData + 1 ) = 0xFF; /* clearing bits 15:8 of IRQ mask */
+            *( writeData + 2 ) = 0xFF; /* clearing bits 7:0 of IRQ mask */
             sx1280Select();
             spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
             sx1280Deselect();
             free( writeData );
 
-            set sx1280 to rx mode and listen for a message
+            /* May have to reset sx1280 to change it from tx mode to rx mode */
+
+            /* set sx1280 to rx mode and listen for a message
                 if a general ready to receive is received then add the public address to a 
                     list of neighbors. when a ready to receive has not been heard from a 
                     certain address for a certain amount of time the address is removed 
                     from neighbors list
                 if a ready to send message is received, change to tx mode and send a specified
-                    ready to receive. when message is received, add it to messageStorageTillUse
+                    ready to receive. when message is received, add it to messageStorageTillUse */
 
-            
+            /* setting IRQ parameters for the general rx mode */
+            writeData = ( uint8_t * ) malloc( 9*sizeof( uint8_t ) );
+            *( writeData ) = SETDIOIRQPARAMS;
+            *( writeData + 1 ) = 0x40; /* IRQ Mask for bits 15:8 of IRQ register, allowing RxTxTimeout */
+            *( writeData + 2 ) = 0x7E; /* IRQ Mask for bits 7:0 of IRQ register, allowing RxDone, SyncWordValid, SyncWordError, HeaderValid, HeaderError, CrcError */
+            *( writeData + 3 ) = 0x00; /* setting DIO 1 Mask bits 15:8 to 0 */
+            *( writeData + 4 ) = 0x00; /* setting DIO 1 Mask bits 7:0 to 0 */
+            *( writeData + 5 ) = 0x00; /* setting DIO 2 Mask bits 15:8 to 0 */
+            *( writeData + 6 ) = 0x00; /* setting DIO 2 Mask bits 7:0 to 0 */
+            *( writeData + 7 ) = 0x00; /* setting DIO 3 Mask bits 15:8 to 0 */
+            *( writeData + 8 ) = 0x00; /* setting DIO 3 Mask bits 7:0 to 0 */
+            sx1280Select();
+            spi_write_blocking( spi1, writeData, 9*sizeof( uint8_t ) );
+            sx1280Select();
+            free( writeData );
+
+            /* setting sx1280 to Rx mode */
+            writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
+            *( writeData ) = SETRX;
+            *( writeData + 1 ) = 0x02; /*  setting the RTC step to 1ms */
+            /* setting Rx mode to continuous, so multiple messages can be received
+               If a ready to receive general message is received it updates the list of neighbors, and continue Rx
+               If a ready to send message is received update neighbors list and switch to message tansfer sequence */
+            *( writeData + 2 ) = 0xFF;
+            *( writeData + 3 ) = 0xFF;
+            sx1280Select();
+            spi_write_blocking( spi1, writeData, 4*sizeof( uint8_t ) );
+            sx1280Deselect();
+            free( writeData );
+
+            /* probly going to have to loop over getrxbufferstatus to check new messages and if 
+               the payload length is greater than 0 the message buffer will be read and the 
+                    message contents will either be added to the list of neighbors
+                    or used to engage is a message transfer, once a message transfer is initiated
+               can also use the GETIRQSTATUS command, the RxDone flag will be set to 1 when
+                    a new message has been received 
+                    should probably do it this way or a message paylod will have to be checked
+                        each time one is received to see if it is new or not
+               Assuming that the rx buffer is cleared when each new message is received */
+
+
+            /* Looping 10 times over rx mode
+               Each loop has a 10 clock-tick delay allowing other tasks to run
+               10 is arbitrarily picked, just needed to be able to exit the loop sometime */
+            for( uint8_t i = 0; i <= 9; i++ ){ /* we want to keep listening generally */
+
+                printf("Listening: %i\n", i );
+                vTaskDelay( 50 );
+
+                /* using GETIRQSTATUS to check if there is a new message in the rx buffer */
+                writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
+                readData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
+                *( writeData ) = GETIRQSTATUS;
+                *( writeData + 1 ) = 0x00;
+                *( writeData + 2 ) = 0x00;
+                *( writeData + 3 ) = 0x00;
+                sx1280Select();
+                spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
+                sx1280Deselect();
+                /* not freeing allocated memory for writeData and readData here because readData is
+                        needed in the following if statement to see if a new message was received */
+
+                /* checking to see if the RxDone bit in the IRQ register is high
+                   Doing a bitwise 'and' operation with 0x02 to mask the rest of the bits in the IRQ register,
+                        giving a clear indication that a message has been received */
+                if( ( *( readData + 3 ) & 0x02 ) == 0x02 ){ /* GETIRQSTATUS RxDone == 1 */
+ 
+                    free( writeData );
+                    free( readData );
+
+                    /* see what the message is and decide what to do with it */
+
+                    /* using GETPACKETSTATUS which returns the rssiSync, and the snr
+                       not using this at the moment but it's in the sx1280 Documentation for Rx operation
+                            pretty sure it's used to see if the received message is useable or not */
+                    writeData = ( uint8_t * ) malloc( 7*sizeof( uint8_t ) );
+                    readData = ( uint8_t * ) malloc( 7*sizeof( uint8_t ) );
+                    *( writeData ) = GETPACKETSTATUS;
+                    *( writeData + 1 ) = 0x00;
+                    *( writeData + 2 ) = 0x00;
+                    *( writeData + 3 ) = 0x00;
+                    *( writeData + 4 ) = 0x00;
+                    *( writeData + 5 ) = 0x00;
+                    *( writeData + 6 ) = 0x00;
+                    sx1280Select();
+                    spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
+                    sx1280Deselect();
+                    free( writeData );
+                    free( readData );
+
+                    /* clearing the IRQ register on the sx1280
+                       Not sure why it's done here in the rx operation in sx1280 documentation
+                            but I'm going to follow it */
+                    writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
+                    *( writeData ) = CLRIRQSTATUS;
+                    *( writeData + 1 ) = 0xFF;
+                    *( writeData + 2 ) = 0xFF;
+                    sx1280Select();
+                    spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
+                    sx1280Deselect();
+                    free( writeData );
+
+                    /* Getting the length of the newly received message by reading register 0x901
+                            on the sx1280
+                            Using GETRXBUFFERSTATUS only works if there is no header in the Lora message */
+                    writeData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
+                    readData = ( uint8_t * ) malloc( 5*sizeof(uint8_t ) );
+                    *( writeData ) = READREGISTER;
+                    *( writeData + 1 ) = 0x09;
+                    *( writeData + 2 ) = 0x01;
+                    *( writeData + 3 ) = 0x00;
+                    *( writeData + 4 ) = 0x00;
+                    sx1280Select();
+                    spi_write_read_blocking( spi1, writeData, readData, 5*sizeof( uint8_t ) );
+                    sx1280Deselect();
+                    /* using holder variable to grab the size of the message to cleanly allocated
+                            the precise amount of memory needed to handle the incoming message */
+                    sizeOfMessageInBuffer = *( readData + 4 );
+                    free( writeData );
+                    free( readData );
+                    
+                    /* Reading the message buffer of the sx1280
+                       Allocating the size of the message in the sx1280 buffer plus 3 because over 
+                            spi you must send an opcode, the buffer offset, and a nop to receive the
+                            payload on the buffer */
+                    writeData = ( uint8_t * ) malloc( ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
+                    readData = ( uint8_t * ) malloc( ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
+                    *( writeData ) = READBUFFER;
+                    *( writeData + 1 ) = 0x00; /* sx1280 message buffer offset */
+                    *( writeData + 2 ) = 0x00; /* sending first nop */
+                    /* Looping through the rest of writeData to add nops for retreiving data in the buffer
+                       Adding 3 because the nop assignment begins at the 4th element in the pointer array
+                            or *( writeData + 3 ), indexed from 0 */
+                    for( uint8_t i = 3; i < sizeOfMessageInBuffer + 3 ; i++){
+                        *( writeData + i ) = 0x00;
+                    }
+                    sx1280Select();
+                    spi_write_read_blocking( spi1, writeData, readData, ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
+                    sx1280Deselect();
+                    free( writeData );
+
+                    /* dont free the readData yet, will have to use it in the following if statements
+                       will then add to the neighbors list or messageStorageTillUse */
+
+                    /* if the message is a ready to receive general, add the radio to the neighbors list */
+                    if( *( readData + 3 ) == 0x52 && *( readData + 4 ) == 0x54 && *( readData + 5 ) == 0x52 && *( readData + 6 ) == 0x47 ){
+                       printf("%c%c%c%c", *( readData + 3 ), *( readData + 4 ), *( readData + 5 ), *( readData + 6 ) );
+                       break; 
+                    }
+                    /* if the message is a ready to send with this radios address,
+                            switch to message transfer and recieve the incoming message */
+                }
+                free( writeData );
+                free( readData );
+
+            }
 
         }
-        else if( messageStorageTillUse is not empty && neighbors are available to send to ) {
+        /* else if( messageStorageTillUse is not empty && neighbors are available to send to ) {
             neighbors list will most likely be a 2D pointer array with the 2nd dimension
                 containing the neighbors public address and time general ready to receive was received
                 if the general ready to receive occurred recently (10s of milliseconds probably) 
