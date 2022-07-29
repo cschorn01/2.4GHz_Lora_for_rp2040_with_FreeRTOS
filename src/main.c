@@ -549,7 +549,6 @@ void vSx1280Task( void *pvParameters ){
 
         /* Setting Tx and Rx Buffer Base Addresses
            Putting both at 0 since messages can be size of buffer */
-
         writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
         *( writeData ) = SETBUFFERBASEADDRESS;
         *( writeData + 1 ) = 0x00;
@@ -655,14 +654,15 @@ void vSx1280Task( void *pvParameters ){
             //while( ( uint8_t * ) *( *( messageStorageTillUse + messageStorageCounter ) + messageSizeCount ) != 0x0A ) for accessing each of the 4 messages in the current messageStorageTillUse memory scheme, and knowing the size of each message as they are being used for dynamic memory allocation
 
             /* writing the general ready to recieve message to the sx1280 message buffer */
-            writeData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
+            writeData = ( uint8_t * ) malloc( 6*sizeof( uint8_t ) );
             *( writeData ) = WRITEBUFFER;
-            *( writeData + 1 ) = 0x52; /* RTRG (Ready To Recieve General) */
-            *( writeData + 2 ) = 0x54;
-            *( writeData + 3 ) = 0x52;
-            *( writeData + 4 ) = 0x47;
+            *( writeData + 1 ) = 0x00;
+            *( writeData + 2 ) = 0x52; /* RTRG (Ready To Recieve General) */
+            *( writeData + 3 ) = 0x54;
+            *( writeData + 4 ) = 0x52;
+            *( writeData + 5 ) = 0x47;
             sx1280Select();
-            spi_write_blocking( spi1, writeData, 5*sizeof( uint8_t ) );
+            spi_write_blocking( spi1, writeData, 6*sizeof( uint8_t ) );
             sx1280Deselect();
             free( writeData );
 
