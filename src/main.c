@@ -499,8 +499,6 @@ void vSx1280Task( void *pvParameters ){
             }
             /* May need an else if later for if the messageStorageTillUse gets full
                If the array gets full there is a problem
-                    The problem would be that the system made a mistake in allocating
-                        too much data to the array
                     If messageStorageTillUse becomes full it would most likely mean that
                         the owner of the radio is receiveing more messages than can be handled
                         or the mesh is requesting more data throughput than can be handled
@@ -514,17 +512,28 @@ void vSx1280Task( void *pvParameters ){
         asm volatile ("nop \n nop \n nop");
         gpio_put( 21, 1 );
 
+        /* Waiting till the busy pin is driven low 
+           So the sx1280 is not sent a command while busy
+                Because it wont receive the  */
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after reset\n");
+        }
+
         /* Setting sx1280 mode to STDBY_RC */
         writeData = ( uint8_t * ) malloc( 2*sizeof( uint8_t ) );
         *( writeData ) = SETSTANDBY;
-        /* Setting to STDBY_RC Mode
-        0x01 is STDBY_XOSC Mode */
-        *( writeData + 1 ) = 0x00;
+        *( writeData + 1 ) = 0x00; /* Setting to STDBY_RC Mode 0x01 is STDBY_XOSC Mode */
         sx1280Select();
         /* int spi_write_blocking( spi_inst_t *spi, const uint8_t *src, size_t len ) */
         spi_write_blocking( spi1, writeData, 2*sizeof( uint8_t ) );
         sx1280Deselect();
         free( writeData );
+
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETSTANDBY\n");
+        }
 
         /* Setting sx1280 Packet Type to Lora */
         writeData = ( uint8_t * ) malloc( 2*sizeof( uint8_t ) );
@@ -534,6 +543,11 @@ void vSx1280Task( void *pvParameters ){
         spi_write_blocking( spi1, writeData, 2*sizeof( uint8_t ) );
         sx1280Deselect();
         free( writeData );
+
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETPACKETTYPE\n");
+        }
 
         /* Setting RF Frequency
            Following sx1280 Guide SPI Example here to 2.4GHz */
@@ -547,6 +561,11 @@ void vSx1280Task( void *pvParameters ){
         sx1280Deselect();
         free( writeData );
 
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETRFFREQUENCY\n");
+        }
+
         /* Setting Tx and Rx Buffer Base Addresses
            Putting both at 0 since messages can be size of buffer */
         writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
@@ -557,6 +576,11 @@ void vSx1280Task( void *pvParameters ){
         spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
         sx1280Deselect();
         free( writeData );
+
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETBUFFERBASEADDRESS\n");
+        }
 
         /* Setting the Modulation Params
            Following sx1280 Guide SPI Exampes here */
@@ -590,13 +614,18 @@ void vSx1280Task( void *pvParameters ){
         sx1280Deselect();
         free( writeData );
 
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETMODULATIONPARAMS\n");
+        }
+
         /* Setting Packet Params
            Following the sx1280 Guide SPI Example */
         writeData = ( uint8_t * ) malloc( 8*sizeof( uint8_t ) );
         *( writeData ) = SETPACKETPARAMS;
         *( writeData + 1 ) = 0x0C; /* Preamble Length */
         *( writeData + 2 ) = 0x00; /* Header Type */
-        *( writeData + 3 ) = 0x80; /* Payload Length */
+        *( writeData + 3 ) = 0x04; /* Payload Length */
         *( writeData + 4 ) = 0x20; /* Cyclical Redundancy Check */
         *( writeData + 5 ) = 0x40; /* Invert IQ/chirp invert */
         *( writeData + 6 ) = 0x00; /* Not Used */
@@ -606,22 +635,27 @@ void vSx1280Task( void *pvParameters ){
         sx1280Deselect();
         free( writeData );
 
+        while( gpio_get( 22 ) == 1 ){
+            vTaskDelay( 10 );
+            printf("Busy after SETPACKETPARAMS\n");
+        }
+
         /* Testing connecting from pico to sx1280 by writing to
                 and reading from buffer
            Working, output should be "status status FF" and is */
 
-        /* writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
+        /*writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
         *( writeData ) = WRITEBUFFER;
         *( writeData + 1 ) = 0x00;
         *( writeData + 2 ) = 0xFF;
         sx1280Select();
         spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
         sx1280Deselect();
-        free( writeData ); */
+        free( writeData );*/
 
         /* Must use two NOP's for reads because data is
                 returned beginning on the second NOP */
-        /* readData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
+        /*readData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
         writeData = ( uint8_t * ) malloc( 5*sizeof( uint8_t ) );
         *( writeData ) = READBUFFER;
         *( writeData + 1 ) = 0x00;
@@ -630,10 +664,10 @@ void vSx1280Task( void *pvParameters ){
         *( writeData + 4 ) = 0x00;
         sx1280Select();
         spi_write_read_blocking( spi1, writeData, readData, 5*sizeof( uint8_t ) );
-        sx1280Deselect(); */ 
-        /*printf( "%X %X %X %X %X\n", *( readData ), *( readData + 1 ), *( readData + 2 ), *( readData + 3 ), *( readData + 4 ) );*/
-        /* free( writeData );
-        free( readData ); */
+        sx1280Deselect(); 
+        printf( "%X %X %X %X %X\n", *( readData ), *( readData + 1 ), *( readData + 2 ), *( readData + 3 ), *( readData + 4 ) );
+        free( writeData );
+        free( readData );*/
 
         /* Mesh below */
 
@@ -642,12 +676,17 @@ void vSx1280Task( void *pvParameters ){
             /* Setting the tx parameters necessary for sending a message */
             writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
             *( writeData ) =  SETTXPARAMS;
-            *( writeData + 1 ) = 0x1A; // power
-            *( writeData + 2 ) = 0xE0; // rampTime
+            *( writeData + 1 ) = 0x1F; // power, 13dbm
+            *( writeData + 2 ) = 0xE0; // rampTime, 20us
             sx1280Select();
             spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
             sx1280Deselect();
             free( writeData );
+
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after SETTXPARAMS\n");
+            }
 
             //send message with radio's public address and general ready to receive status
             //uint8_t messageSizeCount = 0; //can't access size of pointer array, must keep count
@@ -666,6 +705,11 @@ void vSx1280Task( void *pvParameters ){
             sx1280Deselect();
             free( writeData );
 
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after tx WRITEBUFFER\n");
+            }
+
             /* seems possible to use GETIRQSTATUS over spi instead of DIO pins
                can loop GETIRQSTATUS with a vTaskDelay(n) until Tx done is flagged */
 
@@ -682,8 +726,13 @@ void vSx1280Task( void *pvParameters ){
             *( writeData + 8 ) = 0x00; /* setting DIO 3 Mask bits 7:0 to 0 */
             sx1280Select();
             spi_write_blocking( spi1, writeData, 9*sizeof( uint8_t ) );
-            sx1280Select();
+            sx1280Deselect();
             free( writeData );
+
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after tx SETDIOIRQPARAMS\n");
+            }
 
             /* setting sx1280 to transmit mode to send the message in sx1280's message buffer */
             writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
@@ -696,12 +745,35 @@ void vSx1280Task( void *pvParameters ){
             sx1280Deselect();
             free( writeData );
 
-            /* checking the IRQ register through the spi connection
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after tx SETTX\n");
+            }
+
+
+            /* Checking the IRQ register through the spi connection
                Looping over GETIRQSTATUS, with vTaskDelay, till the TxDone bit is positive
                Will most likely put this loop onto a pio state machine to save power, and processing time */
             for( uint32_t i = 0; i <= 100; i++){
 
                 vTaskDelay( 50 );
+
+                /* writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
+                readData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
+                *( writeData ) = GETPACKETTYPE;
+                *( writeData + 1 ) = 0x00;
+                *( writeData + 2 ) = 0x00;
+                sx1280Select();
+                spi_write_read_blocking( spi1, writeData, readData, 3*sizeof( uint8_t ) );
+                sx1280Deselect();
+                printf("Packet Type: %X\n", *( readData + 2 ) );
+                free( writeData );
+                free( readData );
+
+                while( gpio_get( 22 ) == 1 ){
+                    vTaskDelay( 10 );
+                  printf("Busy after tx GETPACKETTYPE\n");
+                } */
 
                 writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
                 readData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
@@ -712,12 +784,18 @@ void vSx1280Task( void *pvParameters ){
                 sx1280Select();
                 spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
                 sx1280Deselect();
-                
+ 
                 printf("IRQ Check: %X\n", *( readData + 3 ) );
 
-                /* checking to see if the TxDone bit in the IRQ register is high
+                while( gpio_get( 22 ) == 1 ){
+                    vTaskDelay( 10 );
+                    printf("Busy after tx GETIRQSTATUS\n");
+                }
+
+                /* Checking bits [7:0] to see if the TxDone bit in the IRQ register is high
                    Doing a bitwise 'and' operation with 0x01 to mask the rest of the bits in the IRQ register,
-                        giving a clear indication that a message has been sent */
+                        giving a clear indication that a message has been sent
+                    Bits [15:8] would be in  *( readData + */
                 if( ( *( readData + 3 ) & 0x01 ) == 0x01 ){ /* GETIRQSTATUS TxDone == 1 */
 
                     /* Once message is sent move on to rx mode to upkeep network 
@@ -743,7 +821,13 @@ void vSx1280Task( void *pvParameters ){
             sx1280Deselect();
             free( writeData );
 
-            /* May have to reset sx1280 to change it from tx mode to rx mode */
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after tx CLRIRQSTATUS\n");
+            }
+
+            /* May have to reset sx1280 to change it from tx mode to rx mode
+               Don't seem to need to */
 
             /* set sx1280 to rx mode and listen for a message
                 if a general ready to receive is received then add the public address to a 
@@ -766,8 +850,13 @@ void vSx1280Task( void *pvParameters ){
             *( writeData + 8 ) = 0x00; /* setting DIO 3 Mask bits 7:0 to 0 */
             sx1280Select();
             spi_write_blocking( spi1, writeData, 9*sizeof( uint8_t ) );
-            sx1280Select();
+            sx1280Deselect();
             free( writeData );
+
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after rx SETDIOIRQPARAMS\n");
+            }
 
             /* setting sx1280 to Rx mode */
             writeData = ( uint8_t * ) malloc( 4*sizeof( uint8_t ) );
@@ -783,10 +872,15 @@ void vSx1280Task( void *pvParameters ){
             sx1280Deselect();
             free( writeData );
 
+            while( gpio_get( 22 ) == 1 ){
+                vTaskDelay( 10 );
+                printf("Busy after SETRX\n");
+            }
+
             /* probly going to have to loop over getrxbufferstatus to check new messages and if 
-               the payload length is greater than 0 the message buffer will be read and the 
+                    the payload length is greater than 0 the message buffer will be read and the 
                     message contents will either be added to the list of neighbors
-                    or used to engage is a message transfer, once a message transfer is initiated
+                    or used to engage in a message transfer, once a message transfer is initiated
                can also use the GETIRQSTATUS command, the RxDone flag will be set to 1 when
                     a new message has been received 
                     should probably do it this way or a message paylod will have to be checked
@@ -797,7 +891,7 @@ void vSx1280Task( void *pvParameters ){
             /* Looping 10 times over rx mode
                Each loop has a 10 clock-tick delay allowing other tasks to run
                10 is arbitrarily picked, just needed to be able to exit the loop sometime */
-            for( uint8_t i = 0; i <= 9; i++ ){ /* we want to keep listening generally */
+            for( uint8_t i = 0; i <= 100; i++ ){ /* we want to keep listening generally */
 
                 printf("Listening: %i\n", i );
                 vTaskDelay( 50 );
@@ -823,6 +917,11 @@ void vSx1280Task( void *pvParameters ){
                     free( writeData );
                     free( readData );
 
+                    while( gpio_get( 22 ) == 1 ){
+                        vTaskDelay( 10 );
+                        printf("Busy after rx GETIRQSTATUS\n");
+                    }
+
                     /* see what the message is and decide what to do with it */
 
                     /* using GETPACKETSTATUS which returns the rssiSync, and the snr
@@ -843,6 +942,11 @@ void vSx1280Task( void *pvParameters ){
                     free( writeData );
                     free( readData );
 
+                    while( gpio_get( 22 ) == 1 ){
+                        vTaskDelay( 10 );
+                        printf("Busy after rx GETPACKETSTATUS\n");
+                    }
+
                     /* clearing the IRQ register on the sx1280
                        Not sure why it's done here in the rx operation in sx1280 documentation
                             but I'm going to follow it */
@@ -854,6 +958,11 @@ void vSx1280Task( void *pvParameters ){
                     spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
                     sx1280Deselect();
                     free( writeData );
+
+                    while( gpio_get( 22 ) == 1 ){
+                        vTaskDelay( 10 );
+                        printf("Busy after rx CLRIRQSTATUS\n");
+                    }
 
                     /* Getting the length of the newly received message by reading register 0x901
                             on the sx1280
@@ -868,12 +977,17 @@ void vSx1280Task( void *pvParameters ){
                     sx1280Select();
                     spi_write_read_blocking( spi1, writeData, readData, 5*sizeof( uint8_t ) );
                     sx1280Deselect();
-                    /* using holder variable to grab the size of the message to cleanly allocated
+                    /* using holder variable to grab the size of the message to cleanly allocate
                             the precise amount of memory needed to handle the incoming message */
                     sizeOfMessageInBuffer = *( readData + 4 );
                     free( writeData );
                     free( readData );
                     
+                    while( gpio_get( 22 ) == 1 ){
+                        vTaskDelay( 10 );
+                        printf("Busy after rx READREGISTER\n");
+                    }
+
                     /* Reading the message buffer of the sx1280
                        Allocating the size of the message in the sx1280 buffer plus 3 because over 
                             spi you must send an opcode, the buffer offset, and a nop to receive the
@@ -899,7 +1013,7 @@ void vSx1280Task( void *pvParameters ){
 
                     /* if the message is a ready to receive general, add the radio to the neighbors list */
                     if( *( readData + 3 ) == 0x52 && *( readData + 4 ) == 0x54 && *( readData + 5 ) == 0x52 && *( readData + 6 ) == 0x47 ){
-                       printf("%c%c%c%c", *( readData + 3 ), *( readData + 4 ), *( readData + 5 ), *( readData + 6 ) );
+                       printf("%c%c%c%c\n", *( readData + 3 ), *( readData + 4 ), *( readData + 5 ), *( readData + 6 ) );
                        break; 
                     }
                     /* if the message is a ready to send with this radios address,
@@ -907,6 +1021,11 @@ void vSx1280Task( void *pvParameters ){
                 }
                 free( writeData );
                 free( readData );
+
+                while( gpio_get( 22 ) == 1 ){
+                    vTaskDelay( 10 );
+                    printf("Busy after rx READBUFFER\n");
+                }
 
             }
 
