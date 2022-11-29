@@ -315,15 +315,8 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
         pvParameter.
     Contemplating on invoking second core if first core
         is busy when multiple tasks are ready
-    Use "back" input from touchscreen to put current
-        task/app in the blocked state and go home screen
-    Using task notifications, I can take the 'notification
-        value' and convert it to a hex value to use as
-        a pointer address
-    Possibly only having IRQ/ISR from touchscreen, will 
-        probly add to a queue that the running task can
-        retrieve touchscreen data from. The rest
-        will probly just add to a queue
+    Using task notifications, I am taking the uint32_t ulValue
+        and convert it to a 32 bit pointer address
 */
 
 
