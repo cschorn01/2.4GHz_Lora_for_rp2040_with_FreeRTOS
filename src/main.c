@@ -27,6 +27,19 @@
  */
 
 
+/* 
+                General Structure Notes 
+
+    In main, setup tasks and run vTaskStartScheduler.
+    In tasks, setup hardware before while(true), and
+        run data transfer with hardware in while(true).
+    Contemplating on invoking second core if first core
+        is busy when multiple tasks are ready
+    Using task notifications, I can take the 'notification
+        value' and convert it to an 8 bit pointer address
+*/
+
+
 #include "../../pico-sdk/src/rp2_common/pico_stdio/include/pico/stdio.h"
 #include "stdlib.h"
 #include "limits.h"
@@ -38,9 +51,11 @@
 #include <stdio.h>
 #include "FreeRTOSConfig.h"
 
+
 static TaskHandle_t xSimpleLEDTaskHandle = NULL;
 static TaskHandle_t xUsbIOTaskHandle = NULL;
 static TaskHandle_t xSx1280TaskHandle = NULL;
+
 
 /*      Defining SX1280 Hexadecimel Commands with Opcodes       */
 
@@ -304,20 +319,6 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
 
 /* params( 0x00=slave or 0x01=master ) return( void ) */
 #define SETADVANCEDRANGING 0x9A
-
-
-/* 
-                General Structure Notes 
-
-    In main, setup tasks and run vTaskStartScheduler.
-    In tasks, setup hardware before while(true), and
-        run data transfer with hardware in while(true).
-    Contemplating on invoking second core if first core
-        is busy when multiple tasks are ready
-    Using task notifications, I can take the 'notification
-        value' and convert it to an 8 bit pointer address
-*/
-
 
 
 /* Function sending common transciever settings to sx1280 */ 
