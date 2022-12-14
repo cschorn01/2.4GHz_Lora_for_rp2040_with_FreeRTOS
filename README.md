@@ -25,3 +25,8 @@ task local pointer array. This is done
 because there are functions called which delays `vSx1280Task` and would allow `vUsbIOTask` to overwrite the *Task Notification* pointer array.
 Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an RX operation. Both operations are done by using the 
 sx1280Setup, sx1280Tx, and sx1280Rx functions.
+
+#To Add
+1. How to use
+2. File Structure with pico_sdk
+3. 
