@@ -1008,6 +1008,40 @@ void vSx1280Task( void *pvParameters ){
             }
         }
 
+        /* TX Operation */
+      
+        /* Placing the contents of taskNotificationFromUSB into writeData
+           Doing so will free taskNotificationFromUSB, allowing for another message to be passed from
+               vUsbIOTask */    
+        writeData = taskNotificationFromUSB;
+
+        free( taskNotificationFromUSB );
+        /* Explicitly setting taskNotificationFromUSB to NULL 
+           free() does not set pointer to NULL only frees memory in heap to be reused */
+        taskNotificationFromUSB = NULL;
+      
+        /* void sx1280Setup( uint8_t standbyMode, uint8_t packetType, uint8_t rfFrequency2316, 
+                             uint8_t rfFrequency158, uint8_t rfFrequency70, uint8_t spreadingFactor, 
+                             uint8_t bandwidth, uint8_t codingRate, uint8_t preambleLength, 
+                             uint8_t headerType, uint8_t cyclicalRedundancyCheck, uint8_t chirpInvert, 
+                             uint8_t *outboundMessage )*/
+        sx1280Setup( 0x00, 0x01, 0xB8,
+                     0x9D, 0x89, 0x70,
+                     0x0A, 0x01, 0x0C,
+                     0x00, 0x20, 0x40,
+                     writeData );
+
+        /* void sx1280Tx( uint8_t power, uint8_t rampTime, uint8_t *outboundMessage, 
+                          uint8_t txIrq158, uint8_t txIrq70, uint8_t txPeriodBase, 
+                          uint8_t txPeriodBaseCount158, uint8_t txPeriodBaseCount70 )*/
+        sx1280Tx( 0x1F, 0xE0, writeData,
+                  0x40, 0x01, 0x02,
+                  0x01, 0xF4 );
+
+        free( writeData );
+      
+        /* RX OPERATION */
+      
         /* Setting up writeData to arbitrarily make the payloadLength value in sx1280Setup 255
            Payload length does not matter for messages with headers */
         writeData = ( uint8_t * ) malloc( 255*sizeof( uint8_t ) );
@@ -1061,37 +1095,6 @@ void vSx1280Task( void *pvParameters ){
         }
 
         free( readData );
-
-        free( taskNotificationFromUSB );
-        /* Explicitly setting taskNotificationFromUSB to NULL 
-           free() does not set pointer to NULL only frees memory in heap to be reused */
-        taskNotificationFromUSB = NULL;
-
-        writeData = ( uint8_t * ) malloc( 3*sizeof( uint8_t ) );
-        *( writeData ) = 0x68;
-        *( writeData + 3 ) = 0x69;
-        *( writeData + 4 ) = 0x00;
-
-        /* void sx1280Setup( uint8_t standbyMode, uint8_t packetType, uint8_t rfFrequency2316, 
-                             uint8_t rfFrequency158, uint8_t rfFrequency70, uint8_t spreadingFactor, 
-                             uint8_t bandwidth, uint8_t codingRate, uint8_t preambleLength, 
-                             uint8_t headerType, uint8_t cyclicalRedundancyCheck, uint8_t chirpInvert, 
-                             uint8_t *outboundMessage )*/
-        sx1280Setup( 0x00, 0x01, 0xB8,
-                     0x9D, 0x89, 0x70,
-                     0x0A, 0x01, 0x0C,
-                     0x00, 0x20, 0x40,
-                     writeData );
-
-        /* void sx1280Tx( uint8_t power, uint8_t rampTime, uint8_t *outboundMessage, 
-                          uint8_t txIrq158, uint8_t txIrq70, uint8_t txPeriodBase, 
-                          uint8_t txPeriodBaseCount158, uint8_t txPeriodBaseCount70 )*/
-        sx1280Tx( 0x1F, 0xE0, writeData,
-                  0x40, 0x01, 0x02,
-                  0x01, 0xF4 );
-
-        free( writeData );
-
 
     }
 
