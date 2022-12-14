@@ -1,7 +1,7 @@
 ## Open_rp2040_Lora_driver
 
 
-#Description
+# Description
 ---
 The **Open_rp2040_Lora_Driver** project is an open source project based on the rp2040, 
 sx1280(2.4GHz Lora radio modem), and freeRTOS. It's goal is to give hobbyists and developers a strong starting point
@@ -25,7 +25,3 @@ task local pointer array. This is done
 because there are functions called which delays `vSx1280Task` and would allow `vUsbIOTask` to overwrite the *Task Notification* pointer array.
 Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an RX operation. Both operations are done by using the 
 sx1280Setup, sx1280Tx, and sx1280Rx functions.
-
-#Hardware
----
-To be implemented
