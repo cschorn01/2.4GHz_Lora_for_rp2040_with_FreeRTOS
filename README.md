@@ -4,11 +4,11 @@
 ## Description
 
 The **Open_rp2040_Lora_Driver** project is an open source project based on the rp2040, 
-sx1280(2.4GHz Lora radio modem), and freeRTOS. It's goal is to give hobbyists and developers a strong starting point
+sx1280(2.4GHz Lora radio modem), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point
 for their projects involving Lora radio.
 
-#Functionality
-Just an open driver for Lora on an rp2040 would not allow for the expansion of an application.
+# Functionality
+An open driver for Lora on an rp2040 would not allow for the expansion of an application.
 Adding freeRTOS to the rp2040 allows the application developer to easily create new functionalities.
 For example, it would be challenging to add a new sensor to a sensor array with Lora in the same 
 superloop, but with freeRTOS we can create a new task(individually addressable superloop) that interacts
