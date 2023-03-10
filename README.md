@@ -29,12 +29,12 @@ sx1280Setup, sx1280Tx, and sx1280Rx functions.
 # File Structure
 The file structure of this project is dictated by the use of the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf) offered by Raspberry Pi, and by.
 Lora_Pico_driver
-├ docs
-├ include
-    ├ FreeRTOSConfig.h
-├ FreeRTOS-Kernel
-├ src
-├ CMakeLists.txt
-├ pico_sdk_import.cmake
+├ docs  
+├ include  
+    ├ FreeRTOSConfig.h  
+├ FreeRTOS-Kernel  
+├ src  
+├ CMakeLists.txt  
+├ pico_sdk_import.cmake  
 
 
