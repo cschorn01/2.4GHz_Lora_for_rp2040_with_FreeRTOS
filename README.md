@@ -51,25 +51,33 @@ The second method is recomended, as it is more dynamic and easier to debug. Howe
   
 Given a new task has been created to handle new hardware there must be communication between tasks. Thats where [freeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in. They are fast and easy to use for sending data between task in a memory efficient manner. In your new task you should create an 8 bit pointer array to store data in an sx1280 message compatible format:  
   
->`uint8_t *dataBuffer = 0;`  
+>```
+> uint8_t *dataBuffer = 0;
+> ```  
   
 Allocate the appropriate amount of memory, in 8 bit chunks, that you'll need to send your data:  
   
->`dataBuffer = ( uint8_t * ) malloc( 256 * sizeof( uint8_t ) );`  
+> ```
+> dataBuffer = ( uint8_t * ) malloc( 256 * sizeof( uint8_t ) );
+> ```  
   
 Here 256 is being used because that is the maximum Lora packet size on the sx1280.  
 Assign your data to the newly allocated data buffer:  
   
->`*( dataBuffer + 0 ) = 0x48; // 0x48 is ASCII Hexadecimal 'H'`  
->`*( dataBuffer + 1 ) = 0x49; // 0x49 is ASCII Hexadecimal 'I'`  
+>```
+>*( dataBuffer + 0 ) = 0x48; // 0x48 is ASCII Hexadecimal 'H' 
+>*( dataBuffer + 1 ) = 0x49; // 0x49 is ASCII Hexadecimal 'I'
+>```
 
 Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to send a task notification from your new task to `vSx1280Task`:
 
-> `xTaskNotify(`  
-> `xSx1280TaskHandle,                  /* TaskHandle_t xTaskToNotify */`  
-> `( uint32_t ) &*( dataBuffer ),      /* uint32_t ulValue (int)&buffer[0] */`  
-> `eSetValueWithoutOverwrite );        /* eNotifyAction eAction */`  
-> `)`
+> ```
+> xTaskNotify(  
+>             xSx1280TaskHandle,                  /* TaskHandle_t xTaskToNotify */  
+>             ( uint32_t ) &*( dataBuffer ),      /* uint32_t ulValue (int)&buffer[0] */  
+>             eSetValueWithoutOverwrite );        /* eNotifyAction eAction */  
+>            )
+> ```
   
 In `vSx1280Task` the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
   
