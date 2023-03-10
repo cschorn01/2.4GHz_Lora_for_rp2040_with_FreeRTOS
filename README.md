@@ -32,8 +32,9 @@ Lora_Pico_driver
 ├─ docs
 ├─ include
     ├─ FreeRTOSConfig.h
+├─ FreeRTOS-Kernel
 ├─ src
 ├─ CMakeLists.txt
-├─ 
+├─ pico_sdk_import.cmake
 
 
