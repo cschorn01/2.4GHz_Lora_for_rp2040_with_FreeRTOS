@@ -1,4 +1,4 @@
-# Open_rp2040_Lora_driver
+# Lora_Pico_Driver
 
 
 ## Description
