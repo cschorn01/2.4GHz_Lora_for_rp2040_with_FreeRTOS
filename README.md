@@ -27,5 +27,5 @@ Once the data is task local `vSx1280Task` will perform a Tx operation, followed 
 sx1280Setup, sx1280Tx, and sx1280Rx functions.
 
 # File Structure
-The file structure of this project is dictated by the use of the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf) offered by Raspberry Pi.
+The file structure of this project is dictated by the use of the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf) offered by Raspberry Pi, and by.
 ├──
