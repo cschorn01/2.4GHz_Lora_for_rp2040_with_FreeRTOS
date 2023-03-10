@@ -31,7 +31,7 @@ The file structure of this project is dictated by the use of the [C/C++ SDK](htt
 Lora_Pico_driver
 ├─ docs
 ├─ include
-    ├─ freeRtosConfig.h
+    ├─ FreeRTOSConfig.h
 ├─ src
 ├─ CMakeLists.txt
 ├─ 
