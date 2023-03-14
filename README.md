@@ -9,8 +9,8 @@ for their projects involving Lora radio.
 
 ## Functionality
 An open driver for [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
-Adding [freeRTOS](https://www.freertos.org/) to the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) allows the application developer to easily create new functionalities.
-For example, it would be challenging to add a new sensor to a sensor array with [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in the same 
+Adding [freeRTOS](https://www.freertos.org/) to the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) allows an application developer to easily create new functionalities.
+For example, it would be challenging to add a new sensor to a sensor array with [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in a single 
 superloop, but with freeRTOS we can create a new task, or individually addressable superloop, that interacts
 with the [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) task independently of the original sensor array. In this project there are three tasks, 
 and main():
