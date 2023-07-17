@@ -48,7 +48,7 @@ There are two ways of using this project:
 1. Creating functions to handle new hardware, and using them in `vSx1280Task`
 2. Creating a task to handle new hardware with functions used in the newly written task
   
-The second method is recomended, as it is more dynamic and easier to debug. However, once downloaded it is your code with which you may do as you please.  
+The second method is recomended, as it is more dynamic and easier to debug. Once downloaded however, it is your code with which you may do as you please.  
   
 Given a new task has been created to handle new hardware there must be communication between tasks. Thats where [freeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in. They are fast and easy to use for sending data between task in a memory efficient manner. In your new task you should create an 8 bit pointer array to store data in an sx1280 message compatible format:  
   
