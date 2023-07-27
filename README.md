@@ -6,7 +6,7 @@
 
 The **Lora_Pico_Driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
 [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point
-for their projects involving Lora radio.
+for their projects involving Lora.
 
 ## Functionality
 An open driver for [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
