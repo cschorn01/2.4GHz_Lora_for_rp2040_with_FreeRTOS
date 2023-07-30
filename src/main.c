@@ -694,6 +694,7 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase, uint8_t 
     uint8_t *readData;
     uint32_t totalSizeOfMessage = 0;
     uint32_t sizeOfMessageInBuffer = 0;
+    uint32_t i = 0 /* Iterator */
  
     /* setting IRQ parameters for the general rx mode */
     writeData = ( uint8_t * ) pvPortMalloc( 9*sizeof( uint8_t ) );
@@ -741,7 +742,7 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase, uint8_t 
        100 is arbitrarily picked, just needed to be able to exit the loop sometime
        Could try to grab the amount of time the sx1280 will listen for and loop for that many ms
             Will need conditionals for 0x0000, 0xFFFF, and everything between */
-    for( uint8_t i = 0; i <= 100; i++ ){ 
+    for( i = 0; i <= 100; i++ ){ 
 
         printf("Listening: %i\n", i,  );
         vTaskDelay( 50 );
@@ -855,26 +856,22 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase, uint8_t 
                 *( writeData + j + 3 ) = 0x00;
                 printf("writeData + j = 0x%X j = %i Final Address = 0x%X\n", ( writeData + j + 3 ), j, ( writeData + sizeOfMessageInBuffer + 3 ) );
             }
-            printf("Test5\n");
             sx1280Select();
             spi_write_read_blocking( spi1, writeData, readData, ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
-            printf("Test6\n");
             sx1280Deselect();
-            printf("Test7\n");
             vPortFree( writeData );
             /* Dont free the readData yet, will have to use it in the following if statements
                Will then add to the neighbors list or messageStorageTillUse */
 
-            /* if the recieved message is not hi in ascii hexadecimal add 50 more iterations to the listening loop */
+            /* if the recieved message is not "HI" in ascii hexadecimal  */
             if( *( readData + 3 ) != 0x68 && *( readData + 4 ) != 0x69 ){
 
                 printf("%c%c\n", *( readData + 3 ), *( readData + 4 ) );
-                i = i - 50;
+                i = i - 50; /* add 50 more iterations to the listening loop */
 
                 vPortFree( readData );
-
             }
-            /* If the recieved message is hi send it to vSx12980Task through a task notification */
+            /* If the recieved message is "HI" send it to vSx1280Task */
             else if( *( readData + 3 ) == 0x68 && *( readData + 4 ) == 0x54 ){
 
                 printf("%c%c\n", *( readData + 3 ), *( readData + 4 ) );
@@ -883,17 +880,12 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase, uint8_t 
                 inboundMessage = ( uint8_t * ) realloc( inboundMessage, sizeOfMessageInBuffer*sizeof( uint8_t ) );
 
                 for( uint32_t j = 0; j < sizeOfMessageInBuffer; j++ ){
-                    /* Returning the latest payload retrieved from the sx1280
-                       inboundMessage is a passed in pointer which  */
+                    /* Editing inboundMessage's pointer reference data */
                     *( inboundMessage + j ) = *( readData + j + 3 );
                 }
-                /* Using break statement to leave loop used for polling sx1280 while it is still listening */
+                /* Using break statement to leave loop used for polling a listening sx1280 */
                 break;
-
             }
-
-        //vPortFree( writeData );
-        //vPortFree( readData );
 
         while( gpio_get( 22 ) == 1 ){
             vTaskDelay( 10 );
@@ -901,9 +893,21 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase, uint8_t 
         }
 
         /* Should add a command to the sx1280 here that puts in back in STDBY_RC mode */
-
     }
 
+    /* Rx SETSANDBY */
+    writeData = ( uint8_t * ) pvPortMalloc( 2*sizeof( uint8_t ) );
+    *( writeData ) = SETSTANDBY;
+    *( writeData + 1 ) = 0x00;
+    sx1280Select();
+    spi_write_blocking( spi1, writeData, 2*sizeof( uint8_t ) );
+    sx1280Deselect();
+    vPortFree( writeData );
+
+    while( gpio_get( 22 ) == 1 ){
+        vTaskDelay( 10 );
+        printf("Busy after rx SETSTANDBY\n");
+    }
 }
 
 
@@ -1125,6 +1129,8 @@ void vUsbIOTask( void *pvParameters ){
        Will free the data after sending address to vSx1280Task
             and vSx1280Task has used the data */
     uint8_t *messageBuffer = 0;
+    uint8_t *messageBufferRealloc = NULL; /* 8 bit pointer for dynamic message input */
+
     /* Allocating 4 bytes for messageBuffer
        Must be allocated before loop so the function realloc 
             has a data array it can work from */ 
@@ -1159,13 +1165,19 @@ void vUsbIOTask( void *pvParameters ){
         }
         /* Checking to see if the character being read in is "\n" */
         else if( currentChar == 0x0A ){
-
-            /* Adding "0x00" to messageBuffer for common end of string character */
-            messageBuffer = ( uint8_t * ) realloc( messageBuffer, ( messageCounter+2 )*sizeof( uint8_t ) );
+            /* Increasing messageBuffer size until "/n"
+               messageCounter is indexed from 0, add one for correct sized message */
+            messageBufferRealloc = messageBuffer;
+            messageBuffer = ( uint8_t * ) pvPortMalloc( ( messageCounter+1 )*sizeof( uint8_t ));
+            for( i = 0; i <= messageCounter; i++ ){
+                *( messageBuffer + i ) = *( messageBufferRealloc + i );
+            }
+            /* Adding currentChar to the last cell in the pointer array */
             *( messageBuffer + messageCounter ) = currentChar;
-            *( messageBuffer + messageCounter + 1 ) = 0x00; /* Adding ascii null terminator to end of string */
+            messageCounter++; /* Incrementing the value of messageCounter */
+            vPortFree( messageBufferRealloc );i /* Freeing reallocation holder pointer */
+
             for( uint32_t i = 0; i <= messageCounter; i++){
-                /*printf("newline: %X messageCounter: %d\n",  *(messageBuffer + messageCounter), messageCounter);*/
                 printf("Typed Message: 0x%X\n", *( messageBuffer + i ) );
             }
             /* FreeRTOS function used to update the receiving
