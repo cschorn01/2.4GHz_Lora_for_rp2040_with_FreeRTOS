@@ -1,6 +1,6 @@
 # Lora_Pico_Driver
 
-## [Click here to quickly add this repository to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
+## [Click here to quickly clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
 ## Description
 
