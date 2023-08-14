@@ -39,7 +39,8 @@ The file structure of this project is dictated by the use of the [C/C++ SDK](htt
     - [src](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/src)  
       - [main.c](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/src/main.c)  
     - [CMakeLists.txt](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/CMakeLists.txt)  
-    - [pico_sdk_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/pico_sdk_import.cmake)  
+    - [pico_sdk_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/pico_sdk_import.cmake)
+    - [FreeRTOS_Kernel_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/FreeRTOS_Kernel_import.cmake)
 
 ## How To Use
 This project is not meant to be used as a library, instead it's a [template](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) to begin a given project involving a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), and [Lora Modem](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). In the `vSx1280Task` you will find an example of how to send and receive message packets over 2.4GHz Lora. This example even includes input over usb through a serial monitor which is included in an outbound message. I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
