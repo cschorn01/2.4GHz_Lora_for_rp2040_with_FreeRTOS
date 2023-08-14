@@ -33,9 +33,9 @@ The file structure of this project is dictated by the use of the [C/C++ SDK](htt
   - [pico_sdk](https://github.com/raspberrypi/pico-sdk)
   - Lora_Pico_driver  
     - [docs](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/docs)  
-    - [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/include)  
-      - [FreeRTOSConfig.h](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/include/FreeRTOSConfig.h)  
     - [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
+      - [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/FreeRTOS-Kernel/include)  
+        - [FreeRTOSConfig.h](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/FreeRTOS-Kernel/include/FreeRTOSConfig.h) 
     - [src](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/src)  
       - [main.c](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/src/main.c)  
     - [CMakeLists.txt](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/CMakeLists.txt)  
