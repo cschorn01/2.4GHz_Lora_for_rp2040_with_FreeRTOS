@@ -980,11 +980,6 @@ void vSx1280Task( void *pvParameters ){
     /* Instantiating pointer for address received from task notification */
     uint32_t *taskNotificationFromUSB = NULL;
 
-    /* Holder variable used in rx operation
-       Used to hold the size of any newly received message on the sx1280's buffer
-       Needed because of the inability to see a pointer array's size */
-    uint32_t sizeOfMessageInBuffer = 0;
-
     sx1280Rp2040Setup();
 
     /* Iterators */
@@ -1064,6 +1059,9 @@ void vSx1280Task( void *pvParameters ){
                 printf("Inbound Message: 0x%X\n", *( readData + i ) );
             }
 
+        }
+        else if( *( readData ) == 0 ){
+            printf("No Inbound Message");
         }
 
         vPortFree( readData );
