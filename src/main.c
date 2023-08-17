@@ -311,10 +311,18 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
 /* --------------------------- sx1280 2.4GHz Lora Operation -------------------------------- */
 
 /* Function sending common transciever settings to sx1280 */ 
-void sx1280Setup( uint8_t standbyMode, uint8_t packetType, uint8_t rfFrequency2316,
-                  uint8_t rfFrequency158, uint8_t rfFrequency70, uint8_t spreadingFactor,
-                  uint8_t bandwidth, uint8_t codingRate, uint8_t preambleLength, 
-                  uint8_t headerType, uint8_t cyclicalRedundancyCheck, uint8_t chirpInvert, 
+void sx1280Setup( uint8_t standbyMode, 
+                  uint8_t packetType, 
+                  uint8_t rfFrequency2316,
+                  uint8_t rfFrequency158, 
+                  uint8_t rfFrequency70, 
+                  uint8_t spreadingFactor,
+                  uint8_t bandwidth, 
+                  uint8_t codingRate, 
+                  uint8_t preambleLength, 
+                  uint8_t headerType, 
+                  uint8_t cyclicalRedundancyCheck, 
+                  uint8_t chirpInvert, 
                   uint8_t *outboundMessage ){
 
     /* Format For SPI Communication with sx1280 */
@@ -531,9 +539,14 @@ void sx1280Setup( uint8_t standbyMode, uint8_t packetType, uint8_t rfFrequency23
 
 
 /* Function setting up and running tx operation on an sx1280, taking 255 byte message packets */
-void sx1280Tx( uint8_t power, uint8_t rampTime, uint8_t *outboundMessage,
-               uint8_t txIrq158, uint8_t txIrq70, uint8_t txPeriodBase,
-               uint8_t txPeriodBaseCount158, uint8_t txPeriodBaseCount70 ){
+void sx1280Tx( uint8_t power, 
+               uint8_t rampTime,
+               uint8_t *outboundMessage,
+               uint8_t txIrq158, 
+               uint8_t txIrq70, 
+               uint8_t txPeriodBase,
+               uint8_t txPeriodBaseCount158, 
+               uint8_t txPeriodBaseCount70 ){
 
     uint8_t *txWriteData = 0;
     uint8_t *txReadData = 0;
@@ -688,8 +701,11 @@ void sx1280Tx( uint8_t power, uint8_t rampTime, uint8_t *outboundMessage,
 
 
 /* Function setting up and running rx operation on an sx1280, 2.4Ghz LORA Modem*/
-void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase,
-               uint8_t rxPeriodBaseCount158, uint8_t rxPeriodBaseCount70,
+void sx1280Rx( uint8_t rxIrq158, 
+               uint8_t rxIrq70, 
+               uint8_t rxPeriodBase,
+               uint8_t rxPeriodBaseCount158, 
+               uint8_t rxPeriodBaseCount70,
                uint8_t *inboundMessage ){
 
     uint8_t *writeData;
@@ -876,7 +892,23 @@ void sx1280Rx( uint8_t rxIrq158, uint8_t rxIrq70, uint8_t rxPeriodBase,
     }
 }
 
+/*  Driving the chip select pin low 
+    Transactions with sx1280 start with chip select low */
+static inline void sx1280Select(){
 
+    asm volatile ("nop \n nop \n nop");/* Find out what it does */
+    gpio_put( 13, 0 );
+    asm volatile ("nop \n nop \n nop");
+}
+
+/*  Driving the chip select pin high 
+    Transactions with sx1280 end with chip select high */
+static inline void sx1280Deselect(){
+
+     asm volatile ("nop \n nop \n nop");
+     gpio_put( 13, 1 );
+     asm volatile ("nop \n nop \n nop");
+}
 
 /*  Function setting up sx1280 connection to rp2040 
     Initializing SPI interface on rp2040
@@ -1025,7 +1057,6 @@ void vSx1280Task( void *pvParameters ){
         }
 
         vPortFree( readData );
-
         vPortFree( taskNotificationFromUSB );
         /* Explicitly setting taskNotificationFromUSB to NULL 
            vPortFree() does not set pointer to NULL only frees memory in heap to be reused */
