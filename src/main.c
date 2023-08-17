@@ -427,7 +427,9 @@ void sx1280Setup( uint8_t standbyMode,
     sx1280Deselect();
     vPortFree( setupWriteData );
     /* 0x1E Must be written to register 0x0925 for SF5 or SF6 */
-    if( spreadingFactor == 0x50 || spreadingFactor == 0x60 ){
+    if( spreadingFactor == 0x50 || 
+        spreadingFactor == 0x60 ){
+
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
         *( setupWriteData + 1 ) = 0x09;
@@ -439,7 +441,9 @@ void sx1280Setup( uint8_t standbyMode,
         vPortFree( setupWriteData );
     }
     /* 0x37 Must be written to register 0x0925 for SF7 or SF8 */
-    else if( spreadingFactor == 0x70 || spreadingFactor == 0x80 ){
+    else if( spreadingFactor == 0x70 || 
+             spreadingFactor == 0x80 ){
+
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
         *( setupWriteData + 1 ) = 0x09;
@@ -451,7 +455,10 @@ void sx1280Setup( uint8_t standbyMode,
         vPortFree( setupWriteData );
     }
     /* 0x32 Must be written to register 0x0925 for SF9, SF10, SF11, or SF12 */
-    else if( spreadingFactor == 0x90 || spreadingFactor == 0xA0 || spreadingFactor == 0xB0 || spreadingFactor == 0xC0 ){
+    else if( spreadingFactor == 0x90 || 
+             spreadingFactor == 0xA0 || 
+             spreadingFactor == 0xB0 || 
+             spreadingFactor == 0xC0 ){
         
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
@@ -1041,14 +1048,17 @@ void vSx1280Task( void *pvParameters ){
                   readData );   /* uint8_t *inboundMessage          */
 
         /* Checking message for "hi" in hexadecimal ascii in the first three bytes */
-        if( *( readData ) == 0x68 && *( readData + 1 ) == 0x69 ){
+        if( *( readData ) == 0x68 && 
+            *( readData + 1 ) == 0x69 ){
 
             for( uint32_t i = 0; i <= 2; i++ ){
                 printf( "Inbound Message: 0x%X\n", *( readData + i ) );
             }
 
         }
-        else if( *( readData ) != 0 && ( *( readData + 3 ) != 0x68 && *( readData + 4 ) != 0x69 ) ){
+        else if( *( readData ) != 0 && 
+                 ( *( readData + 3 ) != 0x68 && 
+                   *( readData + 4 ) != 0x69 ) ){
 
             for( uint8_t i = 0; *( readData + i ) != 0x00; i++ ){
                 printf("Inbound Message: 0x%X\n", *( readData + i ) );
