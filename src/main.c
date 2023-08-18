@@ -310,6 +310,24 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
 
 /* --------------------------- sx1280 2.4GHz Lora Operation -------------------------------- */
 
+/*  Driving the chip select pin low 
+    Transactions with sx1280 start with chip select low */
+static inline void sx1280Select(){
+
+    asm volatile ("nop \n nop \n nop");/* Find out what it does */
+    gpio_put( 13, 0 );
+    asm volatile ("nop \n nop \n nop");
+}
+
+/*  Driving the chip select pin high 
+    Transactions with sx1280 end with chip select high */
+static inline void sx1280Deselect(){
+
+     asm volatile ("nop \n nop \n nop");
+     gpio_put( 13, 1 );
+     asm volatile ("nop \n nop \n nop");
+}
+
 /* Function sending common transciever settings to sx1280 */ 
 void sx1280Setup( uint8_t standbyMode, 
                   uint8_t packetType, 
@@ -427,8 +445,7 @@ void sx1280Setup( uint8_t standbyMode,
     sx1280Deselect();
     vPortFree( setupWriteData );
     /* 0x1E Must be written to register 0x0925 for SF5 or SF6 */
-    if( spreadingFactor == 0x50 || 
-        spreadingFactor == 0x60 ){
+    if( spreadingFactor == 0x50 || spreadingFactor == 0x60 ){
 
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
@@ -441,8 +458,7 @@ void sx1280Setup( uint8_t standbyMode,
         vPortFree( setupWriteData );
     }
     /* 0x37 Must be written to register 0x0925 for SF7 or SF8 */
-    else if( spreadingFactor == 0x70 || 
-             spreadingFactor == 0x80 ){
+    else if( spreadingFactor == 0x70 || spreadingFactor == 0x80 ){
 
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
@@ -455,10 +471,7 @@ void sx1280Setup( uint8_t standbyMode,
         vPortFree( setupWriteData );
     }
     /* 0x32 Must be written to register 0x0925 for SF9, SF10, SF11, or SF12 */
-    else if( spreadingFactor == 0x90 || 
-             spreadingFactor == 0xA0 || 
-             spreadingFactor == 0xB0 || 
-             spreadingFactor == 0xC0 ){
+    else if( spreadingFactor == 0x90 || spreadingFactor == 0xA0 || spreadingFactor == 0xB0 || spreadingFactor == 0xC0 ){
         
         setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
         *( setupWriteData ) = WRITEREGISTER;
@@ -899,23 +912,6 @@ void sx1280Rx( uint8_t rxIrq158,
     }
 }
 
-/*  Driving the chip select pin low 
-    Transactions with sx1280 start with chip select low */
-static inline void sx1280Select(){
-
-    asm volatile ("nop \n nop \n nop");/* Find out what it does */
-    gpio_put( 13, 0 );
-    asm volatile ("nop \n nop \n nop");
-}
-
-/*  Driving the chip select pin high 
-    Transactions with sx1280 end with chip select high */
-static inline void sx1280Deselect(){
-
-     asm volatile ("nop \n nop \n nop");
-     gpio_put( 13, 1 );
-     asm volatile ("nop \n nop \n nop");
-}
 
 /*  Function setting up sx1280 connection to rp2040 
     Initializing SPI interface on rp2040
@@ -998,8 +994,10 @@ void vSx1280Task( void *pvParameters ){
                 100 );                    /* TickType_t xTicksToWait */
  
         if( taskNotificationFromUSB != NULL ){
-            for( uint32_t i = 0; *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) != 0; i++ ){
-                printf("sx1280TaskNotificationFromUSB = %X %c\n", *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ), *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) );
+            for( uint32_t i = 0; *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) != 0; i++){
+                printf("sx1280TaskNotificationFromUSB = %X %c\n", 
+                       *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ), 
+                       *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) );
             }
         }
 
@@ -1043,27 +1041,22 @@ void vSx1280Task( void *pvParameters ){
                   readData );   /* uint8_t *inboundMessage          */
 
         /* Checking message for "hi" in hexadecimal ascii in the first three bytes */
-        if( *( readData ) == 0x68 && 
-            *( readData + 1 ) == 0x69 ){
+        if( *( readData ) == 0x68 && *( readData + 1 ) == 0x69 ){
 
             for( uint32_t i = 0; i <= 2; i++ ){
                 printf( "Inbound Message: 0x%X\n", *( readData + i ) );
             }
-
         }
-        else if( *( readData ) != 0 && 
-                 ( *( readData + 3 ) != 0x68 && 
-                   *( readData + 4 ) != 0x69 ) ){
+        else if( *( readData ) != 0 && ( *( readData + 3 ) != 0x68 && *( readData + 4 ) != 0x69 ) ){
 
             for( uint8_t i = 0; *( readData + i ) != 0x00; i++ ){
                 printf("Inbound Message: 0x%X\n", *( readData + i ) );
             }
-
         }
         else if( *( readData ) == 0 ){
+
             printf("No Inbound Message");
         }
-
         vPortFree( readData );
         vPortFree( taskNotificationFromUSB );
         /* Explicitly setting taskNotificationFromUSB to NULL 
@@ -1213,7 +1206,7 @@ int main( void ){
     uint32_t sx1280Status = xTaskCreate(
                     vSx1280Task,
                     "sx1280",
-                    4096,
+                    4096, /* usStackDepth * 4 = stack in bytes, because pico is 32 bits wide */
                     NULL,
                     1,
                     &xSx1280TaskHandle );
