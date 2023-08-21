@@ -2,6 +2,8 @@
 
 ## [Click here to quickly clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
+![](https://img.shields.io/badge/Code-React-informational?style=flat&logo=react&color=61DAFB)
+
 ## Description
 
 The **Lora_Pico_Driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
