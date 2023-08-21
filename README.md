@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/badge/Code-C-informational?style=flat&logo=c&color=61DAFB)
 
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=vision-friendly-dark)](https://github.com/cschorn01/Lora_Pico_Driver)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/Lora_Pico_Driver)
 
 ## Description
 
