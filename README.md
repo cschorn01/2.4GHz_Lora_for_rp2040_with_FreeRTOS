@@ -1,5 +1,5 @@
 # LoRa_rp2040_Driver
-
+[![By Chris Schorn](https://img.shields.io/badge/By_Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
 [![MIT License](https://img.shields.io/badge/MIT_License-A31B34?style=for-the-badge)](https://mit-license.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 
