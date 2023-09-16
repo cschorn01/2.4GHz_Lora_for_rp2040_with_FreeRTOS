@@ -1,6 +1,6 @@
 # LoRa_rp2040_Driver
-[![By Chris Schorn](https://img.shields.io/badge/By_Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
-[![MIT License](https://img.shields.io/badge/MIT_License-A31B34?style=for-the-badge)](https://mit-license.org/)
+[![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
+[![MIT License](https://img.shields.io/badge/License-MIT-A31B34?style=for-the-badge)](https://mit-license.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 
 ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
@@ -77,7 +77,7 @@ Assign your data to the newly allocated data buffer:
 
 Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to send a task notification from your new task to `vSx1280Task`:
 
-> ```
+> ```c
 > xTaskNotify(  
 >             xSx1280TaskHandle,                  /* TaskHandle_t xTaskToNotify */  
 >             ( uint32_t ) &*( dataBuffer ),      /* uint32_t ulValue (int)&buffer[0] */  
