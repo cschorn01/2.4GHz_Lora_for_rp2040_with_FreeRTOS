@@ -1,7 +1,7 @@
 # LoRa_rp2040_Driver
 
 ![MIT License](https://img.shields.io/badge/MIT_License-A31B34?style=for-the-badge)
-![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+[![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 
 ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
