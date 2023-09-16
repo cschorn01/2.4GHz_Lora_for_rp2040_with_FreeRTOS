@@ -1,5 +1,7 @@
 # LoRa_rp2040_Driver
 
+![MIT License](https://img.shields.io/badge/for%20the%20badge%20style-20B2AA?style=for-the-badge)
+
 ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
 <!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/Lora_Pico_Driver) -->
