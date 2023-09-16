@@ -1,4 +1,4 @@
-# Lora_Pico_Driver
+# Lora_rp2040_Driver
 
 ## [Click here to quickly clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
