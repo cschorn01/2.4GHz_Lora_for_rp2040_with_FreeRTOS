@@ -1,6 +1,6 @@
 # LoRa_rp2040_Driver
 
-![MIT License](https://img.shields.io/badge/MIT_License-A31B34?style=for-the-badge)
+[![MIT License](https://img.shields.io/badge/MIT_License-A31B34?style=for-the-badge)](https://mit-license.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 
 ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
@@ -87,4 +87,4 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
   
 In `vSx1280Task` the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
 
-[🔝](https://github.com/cschorn01/LoRa_rp2040_Driver/)
+[![TOP](https://img.shields.io/badge/TOP-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/LoRa_rp2040_Driver/)
