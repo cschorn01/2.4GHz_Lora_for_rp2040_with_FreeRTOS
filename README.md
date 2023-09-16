@@ -32,7 +32,7 @@ Once the data is task local `vSx1280Task` will perform a Tx operation, followed 
 The file structure of this project is dictated by the use of the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf) offered by Raspberry Pi, and by [freeRTOS](https://www.freertos.org/). The files `CMakeLists.txt`, and `pico_sdk_import.cmake` come from the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf), the file `include/FreeRTOSConfig.h`, and the directory `FreeRTOS-Kernel` come from the use of [freeRTOS](https://www.freertos.org/). If you have not, I encourage you to go through the [getting started with pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf) documentation to set up your coding environment. The directory tree should resemble the list below:
 - pico_projects
   - [pico_sdk](https://github.com/raspberrypi/pico-sdk)
-  - Lora_Pico_driver  
+  - [Lora_Pico_driver](https://github.com/cschorn01/LoRa_rp2040_Driver/) 
     - [docs](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/docs)  
     - [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
       - [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/FreeRTOS-Kernel/include)  
@@ -83,6 +83,5 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 > ```
   
 In `vSx1280Task` the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
-  
-  
 
+## 🔝
