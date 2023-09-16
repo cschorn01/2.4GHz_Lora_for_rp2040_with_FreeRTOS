@@ -1,4 +1,4 @@
-# Lora_rp2040_Driver
+# LoRa_rp2040_Driver
 
 ## [Click here to quickly clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
@@ -6,15 +6,15 @@
 
 ## Description
 
-The **Lora_Pico_Driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
+The **LoRa_rp2040_Driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
 [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the Lora modem, with [LoraWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming soon.
 
 ## Functionality
-An open driver for [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
+An open driver for [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
 Adding [freeRTOS](https://www.freertos.org/) to the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) allows an application developer to easily create new functionalities.
-For example, it would be challenging to add a new sensor to a sensor array with [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in a single 
+For example, it would be challenging to add a new sensor to a sensor array with [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in a single 
 superloop, but with freeRTOS we can create a new task, or individually addressable superloop, that interacts
-with the [Lora](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) task independently of the original sensor array. In this project there are three tasks, 
+with the [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) task independently of the original sensor array. In this project there are three tasks, 
 and main():
 1. `vSimpleLEDTask` is a few lines to show 
 the structure of a task with the setup being above the infinite loop, and the blinking of the onboard pico
