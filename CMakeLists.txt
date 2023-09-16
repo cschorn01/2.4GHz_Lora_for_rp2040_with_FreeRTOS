@@ -19,14 +19,14 @@ add_executable(blink src/main.c)
 
 add_library( FreeRTOS STATIC
         ${FreeRTOS_src}
-        #FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/port.c
+        # FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/port.c
         FreeRTOS-Kernel/portable/GCC/ARM_CM0/port.c
         FreeRTOS-Kernel/portable/MemMang/heap_4.c
 )
 
 target_include_directories( FreeRTOS PUBLIC
         FreeRTOS-Kernel/include
-        FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040
+        # FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040
         FreeRTOS-Kernel/portable/GCC/ARM_CM0
 )
 
