@@ -14,7 +14,6 @@
 [![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#how-to-use)
 
 [![Stargazers repo roster for @cschorn01/rpi_pico_lora_driver](https://reporoster.com/stars/cschorn01/rpi_pico_lora_driver)](https://github.com/cschorn01/rpi_pico_lora_driver/stargazers)
-![Hits](https://hitcounter.pythonanywhere.com/count/tag.svg?url=https://github.com/cschorn01/rpi_pico_lora_driver)
 
 <!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/rpi_pico_lora_driver) -->
 
