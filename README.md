@@ -93,4 +93,6 @@ In [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5ac
 
 [![Stargazers repo roster for @cschorn01/LoRa_rp2040_Driver](https://reporoster.com/stars/cschorn01/LoRa_rp2040_Driver)](https://github.com/cschorn01/LoRa_rp2040_Driver/stargazers)
 
-[![TOP](https://img.shields.io/badge/TOP-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/LoRa_rp2040_Driver/)
+<div align="center" dir="auto">
+  <img src="https://img.shields.io/badge/TOP-FFFFFF?style=for-the-badge" alt="Back To Top" href="https://github.com/cschorn01/LoRa_rp2040_Driver">
+</div>
