@@ -89,6 +89,6 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 >            )
 > ```
   
-In `vSx1280Task` the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
+In [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
 
 [![TOP](https://img.shields.io/badge/TOP-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/LoRa_rp2040_Driver/)
