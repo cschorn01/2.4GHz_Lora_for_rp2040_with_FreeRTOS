@@ -9,6 +9,8 @@
 <!-- ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) -->
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 [![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#description)
+[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#functionality)
+
 
 [![Stargazers repo roster for @cschorn01/rpi_pico_lora_driver](https://reporoster.com/stars/cschorn01/rpi_pico_lora_driver)](https://github.com/cschorn01/rpi_pico_lora_driver/stargazers)
 ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/rpi_pico_lora_driver)
