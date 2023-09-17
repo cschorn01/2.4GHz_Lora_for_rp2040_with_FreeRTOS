@@ -36,10 +36,10 @@ Once the data is task local `vSx1280Task` will perform a Tx operation, followed 
 `sx1280Setup`, `sx1280Tx`, and `sx1280Rx` functions, also in `main.c`.
 
 ## File Structure
-The file structure of this project is dictated by the use of the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf) offered by Raspberry Pi, and by [freeRTOS](https://www.freertos.org/). The files `CMakeLists.txt`, and `pico_sdk_import.cmake` come from the [C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf), the file `include/FreeRTOSConfig.h`, and the directory `FreeRTOS-Kernel` come from the use of [freeRTOS](https://www.freertos.org/). If you have not, I encourage you to go through the [getting started with pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf) documentation to set up your coding environment. The directory tree should resemble the list below:
+
 - pico_projects
   - [RPi Pico C SDK](https://github.com/raspberrypi/pico-sdk)
-  - [LoRa rp2040 Driver](https://github.com/cschorn01/LoRa_rp2040_Driver/) 
+  - [LoRa_rp2040_Driver](https://github.com/cschorn01/LoRa_rp2040_Driver/) 
     - [Docs](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/docs)  
     - [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
       - [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/FreeRTOS-Kernel/include)  
@@ -51,6 +51,7 @@ The file structure of this project is dictated by the use of the [C/C++ SDK](htt
     - [FreeRTOS_Kernel_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/FreeRTOS_Kernel_import.cmake)
 
 ## How To Use
+
 This project is not meant to be used as a library, instead it's a [template](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) to begin a given project involving a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), and [Lora Modem](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). In the `vSx1280Task` you will find an example of how to send and receive message packets over 2.4GHz Lora. This example even includes input over usb through a serial monitor which is included in an outbound message. I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
 There are two ways of using this project:  
@@ -90,6 +91,8 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 > ```
   
 In [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
+
+## Stargazers
 
 [![Stargazers repo roster for @cschorn01/LoRa_rp2040_Driver](https://reporoster.com/stars/cschorn01/LoRa_rp2040_Driver)](https://github.com/cschorn01/LoRa_rp2040_Driver/stargazers)
 
