@@ -69,10 +69,10 @@ Given a new task has been created to handle new hardware there must be communica
 Allocate the appropriate amount of memory, in 8 bit chunks, that you'll need to send your data:  
   
 > ```c
-> dataBuffer = ( uint8_t * ) malloc( 256 * sizeof( uint8_t ) );
+> dataBuffer = ( uint8_t * ) malloc( 255 * sizeof( uint8_t ) );
 > ```  
   
-Here 256 is being used because that is the maximum Lora packet size on the sx1280.  
+Here 255 is being used because that is the maximum Lora packet size on the sx1280.  
 Assign your data to the newly allocated data buffer:  
   
 >```c
