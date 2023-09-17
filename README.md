@@ -10,7 +10,7 @@
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
 
 [![Stargazers repo roster for @cschorn01/LoRa_rp2040_Driver](https://reporoster.com/stars/cschorn01/LoRa_rp2040_Driver)](https://github.com/cschorn01/LoRa_rp2040_Driver/stargazers)
-![GitHub Contributors Image](https://contrib.rocks/image?repo=Your_GitHub_Username/Your_GitHub_Repository_Name)
+![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/LoRa_rp2040_Driver)
 
 <!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/Lora_Pico_Driver) -->
 
