@@ -18,7 +18,7 @@ The **LoRa_rp2040_Driver** project is an open source project based on the [Raspb
 
 ## Functionality
 
-This driver uses a [Raspberry Pi Pico's](https://www.raspberrypi.com/products/raspberry-pi-pico/) SPI bus to communicate with a [2.4GHz LoRa radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently of the original sensor array. 
+This driver uses a [Raspberry Pi Pico's](https://www.raspberrypi.com/products/raspberry-pi-pico/) SPI bus to communicate with a [2.4GHz LoRa radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
 
 In this project there are three tasks, and main():
 1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
