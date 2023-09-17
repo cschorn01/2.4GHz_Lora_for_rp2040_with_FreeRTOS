@@ -17,23 +17,16 @@ The **LoRa_rp2040_Driver** project is an open source project based on the [Raspb
 [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the Lora modem, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
 
 ## Functionality
+
 An open driver for [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
 Adding [freeRTOS](https://www.freertos.org/) to the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) allows an application developer to easily create new functionalities.
 For example, it would be challenging to add a new sensor to a sensor array with [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in a single 
 superloop, but with freeRTOS we can create a new task, or individually addressable superloop, that interacts
 with the [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) task independently of the original sensor array. In this project there are three tasks, 
 and main():
-1. `vSimpleLEDTask` is a few lines to show 
-the structure of a task with the setup being above the infinite loop, and the blinking of the onboard pico
-LED to show the action of the infinite loop.
-2. `vUsbIOTask` which takes input from a serial monitor over usb using getchar(). A 0x00 or NULL is 
-appended to the end of the unsigned 8 bit pointer array used as a dynamic ascii character array for a NULL terminated 'string'. 
-The address of the pointer array is then sent to `vSx1280Task` for sending through the sx1280.
-3. `vSx1280Task` will take the pointer array from `vUsbIOTask` through a *Task Notification* and reassign the pointer to a 
-task local pointer array. This is done
-because there are functions called which delays `vSx1280Task` and would allow `vUsbIOTask` to overwrite the *Task Notification* pointer array.
-Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an Rx operation. Both operations are done by using the 
-`sx1280Setup`, `sx1280Tx`, and `sx1280Rx` functions, also in `main.c`.
+1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
+2. `vUsbIOTask` takes input from a serial monitor over usb. An unsigned 8 bit pointer array is used as a dynamic ascii character array for a 'string', which is NULL terminated. The address of the pointer array is then sent to `vSx1280Task` to send over LoRa.
+3. `vSx1280Task` receives the pointer array from `vUsbIOTask` through a *Task Notification* and reassign the pointer to a task local pointer array. This is done because there are functions called which delay `vSx1280Task` and would allow `vUsbIOTask` to overwrite the *Task Notification* pointer array. Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an Rx operation. Both operations are done by using the `sx1280Setup`, `sx1280Tx`, and `sx1280Rx` functions, also in `main.c`.
 
 ## File Structure
 
@@ -52,15 +45,17 @@ Once the data is task local `vSx1280Task` will perform a Tx operation, followed 
 
 ## How To Use
 
-This project is not meant to be used as a library, instead it's a [template](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) to begin a given project involving a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), and [Lora Modem](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). In the `vSx1280Task` you will find an example of how to send and receive message packets over 2.4GHz Lora. This example even includes input over usb through a serial monitor which is included in an outbound message. I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
+This project is not meant to be used as a library, instead it's a [template](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) to begin a given project involving a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), and [Lora Modem](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
 There are two ways of using this project:  
 1. Creating functions to handle new hardware, and using them in `vSx1280Task`
 2. Creating a task to handle new hardware with functions used in the newly written task
   
-The second method is recomended, as it is more dynamic and easier to debug. Once downloaded however, it is your code with which you may do as you please.  
-  
-Given a new task has been created to handle new hardware there must be communication between tasks. Thats where [freeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in. They are fast and easy to use for sending data between task in a memory efficient manner. In your new task you should create an 8 bit pointer array to store data in an sx1280 message compatible format:  
+The second method is recomended, as it is more dynamic and easier to debug. However, it is FOSS code with which you may do as you please.  
+
+Given a new task has been created to handle new hardware there must be communication between tasks. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in. They are fast and easy to use for sending data between task in a memory efficient manner. 
+
+In your new task you should create an 8 bit pointer array to store data in an 8 bit format to send through SPI:  
   
 >```c
 > uint8_t *dataBuffer = 0;
@@ -72,7 +67,7 @@ Allocate the appropriate amount of memory, in 8 bit chunks, that you'll need to 
 > dataBuffer = ( uint8_t * ) malloc( 255 * sizeof( uint8_t ) );
 > ```  
   
-Here 255 is being used because that is the maximum Lora packet size on the sx1280.  
+Here 255 is used because it's the maximum LoRa packet size on the sx1280.  
 Assign your data to the newly allocated data buffer:  
   
 >```c
