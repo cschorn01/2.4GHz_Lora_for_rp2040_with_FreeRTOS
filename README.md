@@ -14,16 +14,13 @@
 ## Description
 
 The **LoRa_rp2040_Driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
-[Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the Lora modem, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
+[Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
 
 ## Functionality
 
-An open driver for [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) would not easily allow for the expansion of an application.
-Adding [freeRTOS](https://www.freertos.org/) to the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) allows an application developer to easily create new functionalities.
-For example, it would be challenging to add a new sensor to a sensor array with [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) in a single 
-superloop, but with freeRTOS we can create a new task, or individually addressable superloop, that interacts
-with the [LoRa](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280) task independently of the original sensor array. In this project there are three tasks, 
-and main():
+This driver uses a [Raspberry Pi Pico's](https://www.raspberrypi.com/products/raspberry-pi-pico/) SPI bus to communicate with a [2.4GHz LoRa radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/LoRa_rp2040_Driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently of the original sensor array. 
+
+In this project there are three tasks, and main():
 1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
 2. `vUsbIOTask` takes input from a serial monitor over usb. An unsigned 8 bit pointer array is used as a dynamic ascii character array for a 'string', which is NULL terminated. The address of the pointer array is then sent to `vSx1280Task` to send over LoRa.
 3. `vSx1280Task` receives the pointer array from `vUsbIOTask` through a *Task Notification* and reassign the pointer to a task local pointer array. This is done because there are functions called which delay `vSx1280Task` and would allow `vUsbIOTask` to overwrite the *Task Notification* pointer array. Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an Rx operation. Both operations are done by using the `sx1280Setup`, `sx1280Tx`, and `sx1280Rx` functions, also in `main.c`.
