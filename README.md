@@ -21,11 +21,11 @@
 ## Description
 
 The **rpi_pico_lora_driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
-[Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [freeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
+[Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [FreeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
 
 ## Functionality
 
-This driver uses a [Raspberry Pi Pico's](https://www.raspberrypi.com/products/raspberry-pi-pico/) SPI bus to communicate with a [2.4GHz LoRa radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
+This driver uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
 
 In this project there are three tasks, and main():
 1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
@@ -49,7 +49,7 @@ In this project there are three tasks, and main():
 
 ## How To Use
 
-This project is not meant to be used as a library, instead it's a [template](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) to begin a given project involving a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), and [Lora Modem](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280). I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
+This project is not meant to be used as a library, instead it's a template to begin a given project involving a Raspberry Pi Pico, and Lora Modem. I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
 There are two ways of using this project:  
 1. Creating functions to handle new hardware, and using them in `vSx1280Task`
