@@ -9,7 +9,6 @@
 [![Semtech LoRa](https://img.shields.io/badge/LoRa-1CAEED?style=for-the-badge)](https://www.semtech.com/lora)
 [![FreeRTOS](https://img.shields.io/badge/FreeRTOS-5CBA5B?style=for-the-badge)](https://www.freertos.org/)
 
-<!-- ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) -->
 [![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#description)
 [![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#functionality)
 [![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#file-structure)
