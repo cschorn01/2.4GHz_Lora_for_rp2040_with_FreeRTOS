@@ -1,4 +1,4 @@
-# RPi Pico LoRa Driver 
+# RPi Pico LoRa Template
 [![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
 [![MIT License](https://img.shields.io/badge/License-MIT-A31B34?style=for-the-badge)](https://mit-license.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
@@ -8,25 +8,25 @@
 
 <!-- ## [Clone this repository template to Your Github](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01) -->
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
-[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#description)
-[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#functionality)
-[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#file-structure)
-[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_driver/tree/main#how-to-use)
+[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#description)
+[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#functionality)
+[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#file-structure)
+[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#how-to-use)
 
-[![Stargazers repo roster for @cschorn01/rpi_pico_lora_driver](https://reporoster.com/stars/cschorn01/rpi_pico_lora_driver)](https://github.com/cschorn01/rpi_pico_lora_driver/stargazers)
+[![Stargazers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/stars/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/stargazers)
 
-<!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/rpi_pico_lora_driver) -->
+<!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/rpi_pico_lora_template) -->
 
 <!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/Lora_Pico_Driver) -->
 
 ## Description
 
-The **rpi_pico_lora_driver** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
+The **rpi_pico_lora_template** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
 [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [FreeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project is the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
 
 ## Functionality
 
-This driver uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
+This driver uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
 
 In this project there are three tasks, and main():
 1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
@@ -37,7 +37,7 @@ In this project there are three tasks, and main():
 
 - pico_projects
   - [RPi Pico C SDK](https://github.com/raspberrypi/pico-sdk)
-  - [rpi_pico_lora_driver](https://github.com/cschorn01/rpi_pico_lora_driver/) 
+  - [rpi_pico_lora_template](https://github.com/cschorn01/rpi_pico_lora_template/) 
     - [Docs](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/docs)  
     - [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
       - [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/FreeRTOS-Kernel/include)  
@@ -90,14 +90,14 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 >            )
 > ```
   
-In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_driver/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
+In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
 
 <!-- Forkers
 
-[![Forkers repo roster for @cschorn01/rpi_pico_lora_driver](https://reporoster.com/forks/cschorn01/rpi_pico_lora_driver)](https://github.com/cschorn01/rpi_pico_lora_driver/network/members) -->
+[![Forkers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/forks/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/network/members) -->
 
 <div align="center" dir="auto">
-  <a href="https://github.com/cschorn01/rpi_pico_lora_driver">
+  <a href="https://github.com/cschorn01/rpi_pico_lora_template">
     <img src="https://img.shields.io/badge/Back_To_Top-FFFFFF?style=for-the-badge" alt="Back To Top">
   </a>
 </div>
