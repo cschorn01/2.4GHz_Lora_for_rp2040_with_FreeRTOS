@@ -13,6 +13,7 @@
 [![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#functionality)
 [![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#file-structure)
 [![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#how-to-use)
+[![Fixed Issues](https://img.shields.io/badge/fixed_issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/blob/main/README.md#fixed-issues)
 
 [![Stargazers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/stars/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/stargazers)
 
