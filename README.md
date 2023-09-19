@@ -97,6 +97,16 @@ In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7
 
 [![Forkers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/forks/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/network/members) -->
 
+## Fixed Issues
+
+![Error](https://img.shields.io/badge/Error-A31B34?style=for-the-badge) `arm-none-eabi-gcc: fatal error: cannot read spec file 'nosys.specs': No such file or directory`
+
+[Solution](https://img.shields.io/badge/Solution-5CBA5B?style=for-the-badge) Go to `/usr/bin/local/` delete all files beginning in `arm-none-eabi-` then reinstall the arm toolchain.
+
+**Mac:** `brew install --cask gcc-arm-embedded`
+
+**Linux:** `sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential`
+
 <div align="center" dir="auto">
   <a href="https://github.com/cschorn01/rpi_pico_lora_template">
     <img src="https://img.shields.io/badge/Back_To_Top-FFFFFF?style=for-the-badge" alt="Back To Top">
