@@ -16,7 +16,7 @@
 [![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#functionality)
 [![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#file-structure)
 [![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#how-to-use)
-[![Fixed Issues](https://img.shields.io/badge/fixed_issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/blob/main/README.md#fixed-issues)
+[![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/blob/main/README.md#issues)
 
 [![Stargazers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/stars/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/stargazers)
 
@@ -101,7 +101,7 @@ In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7
 
 [![Forkers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/forks/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/network/members) -->
 
-## Fixed Issues
+## Issues
 
 <!-- ![Error](https://img.shields.io/badge/Error-A31B34?style=for-the-badge) `arm-none-eabi-gcc: fatal error: cannot read spec file 'nosys.specs': No such file or directory`
 
