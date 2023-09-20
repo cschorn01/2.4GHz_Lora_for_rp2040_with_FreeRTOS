@@ -1,5 +1,7 @@
 # RPi Pico LoRa Template
 
+<!-- Emoji Cheat Sheet: https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md -->
+
 [![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
 ![Status](https://img.shields.io/badge/Status-usb_not_working-FFFFFF?style=for-the-badge)
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
