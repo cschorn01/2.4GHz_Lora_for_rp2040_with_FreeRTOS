@@ -1,10 +1,10 @@
-# RPi Pico LoRa Template
+# Raspberry Pi Pico LoRa Template
 
 <!-- Emoji Cheat Sheet: https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md -->
 
 [![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
 ![Status](https://img.shields.io/badge/Status-usb_not_working-FFFFFF?style=for-the-badge)
-[![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=Lora_Pico_Driver&template_owner=cschorn01)
+[![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=raspberry_pi_pico_lora_template&template_owner=cschorn01)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-A31B34?style=for-the-badge)](https://mit-license.org/)
 [![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
@@ -12,26 +12,26 @@
 [![Semtech LoRa](https://img.shields.io/badge/LoRa-1CAEED?style=for-the-badge)](https://www.semtech.com/lora)
 [![FreeRTOS](https://img.shields.io/badge/FreeRTOS-5CBA5B?style=for-the-badge)](https://www.freertos.org/)
 
-[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#description)
-[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#functionality)
-[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#file-structure)
-[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/tree/main#how-to-use)
-[![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/rpi_pico_lora_template/blob/main/README.md#issues)
+[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#description)
+[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#functionality)
+[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#file-structure)
+[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#how-to-use)
+[![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/README.md#issues)
 
-[![Stargazers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/stars/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/stargazers)
+[![Stargazers repo roster for @cschorn01/raspberry_pi_pico_lora_template](https://reporoster.com/stars/cschorn01/raspberry_pi_pico_lora_template)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/stargazers)
 
-<!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/rpi_pico_lora_template) -->
+<!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/raspberry_pi_pico_lora_template) -->
 
-<!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/Lora_Pico_Driver) -->
+<!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/raspberry_pi_pico_lora_template) -->
 
 ## Description
 
-The **rpi_pico_lora_template** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
+The **raspberry_pi_pico_lora_template** project is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), 
 [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [FreeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project uses the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
 
 ## Functionality
 
-This driver uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
+This driver uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) task independently. 
 
 In this project there are three tasks, and main():
 1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
@@ -42,16 +42,16 @@ In this project there are three tasks, and main():
 
 - :file_folder: pico_projects
   - :file_folder: [RPi Pico C SDK](https://github.com/raspberrypi/pico-sdk)
-  - :file_folder: [rpi_pico_lora_template](https://github.com/cschorn01/rpi_pico_lora_template/) 
-    - :file_folder: [Docs](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/docs)  
+  - :file_folder: [raspberry_pi_pico_lora_template](https://github.com/cschorn01/raspberry_pi_pico_lora_template/) 
+    - :file_folder: [Docs](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/docs)  
     - :file_folder: [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
-      - :file_folder: [include](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/FreeRTOS-Kernel/include)  
-        - :page_facing_up: [FreeRTOSConfig.h](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/FreeRTOS-Kernel/include/FreeRTOSConfig.h) 
-    - :file_folder: [src](https://github.com/cschorn01/Lora_Pico_Driver/tree/main/src)  
-      - :page_facing_up: [main.c](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/src/main.c)  
-    - :page_facing_up: [CMakeLists.txt](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/CMakeLists.txt)  
-    - :page_facing_up: [pico_sdk_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/pico_sdk_import.cmake)
-    - :page_facing_up: [FreeRTOS_Kernel_import.cmake](https://github.com/cschorn01/Lora_Pico_Driver/blob/main/FreeRTOS_Kernel_import.cmake)
+      - :file_folder: [include](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/FreeRTOS-Kernel/include)  
+        - :page_facing_up: [FreeRTOSConfig.h](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/FreeRTOS-Kernel/include/FreeRTOSConfig.h) 
+    - :file_folder: [src](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/src)  
+      - :page_facing_up: [main.c](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/src/main.c)  
+    - :page_facing_up: [CMakeLists.txt](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/CMakeLists.txt)  
+    - :page_facing_up: [pico_sdk_import.cmake](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/pico_sdk_import.cmake)
+    - :page_facing_up: [FreeRTOS_Kernel_import.cmake](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/FreeRTOS_Kernel_import.cmake)
 
 ## How To Use
 
@@ -95,11 +95,11 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 >            )
 > ```
   
-In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
+In [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
 
 <!-- Forkers
 
-[![Forkers repo roster for @cschorn01/rpi_pico_lora_template](https://reporoster.com/forks/cschorn01/rpi_pico_lora_template)](https://github.com/cschorn01/rpi_pico_lora_template/network/members) -->
+[![Forkers repo roster for @cschorn01/raspberry_pi_pico_lora_template](https://reporoster.com/forks/cschorn01/raspberry_pi_pico_lora_template)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/network/members) -->
 
 ## Issues
 
@@ -112,7 +112,7 @@ In [`vSx1280Task`](https://github.com/cschorn01/rpi_pico_lora_template/blob/44e7
 **Linux:** `sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential` -->
 
 <div align="center" dir="auto">
-  <a href="https://github.com/cschorn01/rpi_pico_lora_template">
+  <a href="https://github.com/cschorn01/raspberry_pi_pico_lora_template">
     <img src="https://img.shields.io/badge/Back_To_Top-FFFFFF?style=for-the-badge" alt="Back To Top">
   </a>
 </div>
