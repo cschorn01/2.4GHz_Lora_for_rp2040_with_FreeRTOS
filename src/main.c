@@ -1173,7 +1173,7 @@ void vUsbIOTask( void *pvParameters ){
                 eSetValueWithoutOverwrite );      /* eNotifyAction eAction */
 
             messageCounter = 0;/* Setting messageCounter to 0 for new message to be taken in */
-            messageBuffer = NULL; /* Set messageBuffer to NULL ensuring address isn't held  */ 
+            messageBuffer = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
         }
 
         vTaskDelay( 10 );
