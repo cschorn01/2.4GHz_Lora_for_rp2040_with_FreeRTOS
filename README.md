@@ -3,7 +3,7 @@
 <!-- Emoji Cheat Sheet: https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md -->
 
 [![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
-![Status](https://img.shields.io/badge/Status-usb_not_working-FFFFFF?style=for-the-badge)
+[![Status](https://img.shields.io/badge/Status-usb_not_working-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/9b8eda27daef9f655651284ecc0680a135ffd662/src/main.c#L1118C1-L1118C39)
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=raspberry_pi_pico_lora_template&template_owner=cschorn01)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-A31B34?style=for-the-badge)](https://mit-license.org/)
