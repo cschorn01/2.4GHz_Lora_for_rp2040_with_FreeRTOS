@@ -41,14 +41,14 @@ In this project there are three tasks, and main():
 ## File Structure
 
 - :file_folder: pico_projects
-  - :file_folder: [RPi Pico C SDK](https://github.com/raspberrypi/pico-sdk)
+  - :file_folder: [Raspberry Pi Pico C SDK](https://github.com/raspberrypi/pico-sdk)
   - :file_folder: [raspberry_pi_pico_lora_template](https://github.com/cschorn01/raspberry_pi_pico_lora_template/) 
     - :file_folder: [Docs](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/docs)  
     - :file_folder: [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel)
-      - :file_folder: [include](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/FreeRTOS-Kernel/include)  
-        - :page_facing_up: [FreeRTOSConfig.h](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/FreeRTOS-Kernel/include/FreeRTOSConfig.h) 
     - :file_folder: [src](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/src)  
-      - :page_facing_up: [main.c](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/src/main.c)  
+      - :page_facing_up: [main.c](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/src/main.c)
+    - :file_folder: [include](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/include)
+      - :page_facing_up: [FreeRTOSConfig.h](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main/include/FreeRTOSConfig.h)
     - :page_facing_up: [CMakeLists.txt](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/CMakeLists.txt)  
     - :page_facing_up: [pico_sdk_import.cmake](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/pico_sdk_import.cmake)
     - :page_facing_up: [FreeRTOS_Kernel_import.cmake](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/FreeRTOS_Kernel_import.cmake)
