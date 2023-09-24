@@ -57,7 +57,7 @@ In this project there are three tasks, and main():
 
 This project is a template to begin a project with a Raspberry Pi Pico, and Lora Modem, for easily adding sensors, or displays.  Then you can create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
-When adding sensors, create a new task for handling each one. With a new task handling new hardware there must be communication between tasks to send a message. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in.
+When adding sensors, create a new task for handling each one. With a new task handling new hardware there must be communication between tasks. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in.
 
 In the new task instantiate an 8 bit pointer to store data for sending over SPI:  
 
@@ -79,7 +79,7 @@ Assign your data to the newly allocated data buffer. Here, 255 is used because i
 >*( dataBuffer + 1 ) = 0x49; // 0x49 is ASCII Hexadecimal 'I'
 >```
 
-Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to send a task notification from your new task to `vSx1280Task`:
+Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to send a *Task Notification* from your new task to `vSx1280Task`. This is where a LoRa message will be sent:
 
 > ```c
 > xTaskNotify(  
@@ -88,8 +88,6 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 >             eSetValueWithoutOverwrite );        /* eNotifyAction eAction */  
 >            )
 > ```
-  
-In [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
 
 To use the incoming *Tast Notification*, it must be reassigned to a task local pointer. This template uses a struct containing an 8 bit pointer:
 
