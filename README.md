@@ -3,7 +3,7 @@
 <!-- Emoji Cheat Sheet: https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md -->
 
 [![By Chris Schorn](https://img.shields.io/badge/Author-Chris_Schorn-FFFFFF?style=for-the-badge)](https://github.com/cschorn01)
-[![Status](https://img.shields.io/badge/Status-usb_not_working-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/9b8eda27daef9f655651284ecc0680a135ffd662/src/main.c#L1118C1-L1118C39)
+[![Status](https://img.shields.io/badge/Status-working-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/9b8eda27daef9f655651284ecc0680a135ffd662/src/main.c#L1118C1-L1118C39)
 [![Clone Repository Template](https://img.shields.io/badge/Clone_Repository_Template-FFFFFF?style=for-the-badge)](https://github.com/new?template_name=raspberry_pi_pico_lora_template&template_owner=cschorn01)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-A31B34?style=for-the-badge)](https://mit-license.org/)
@@ -55,30 +55,24 @@ In this project there are three tasks, and main():
 
 ## How To Use
 
-This project is not meant to be used as a library, instead it's a template to begin a given project involving a Raspberry Pi Pico, and Lora Modem. I encourage you to add sensors, or displays and create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
+This project is a template to begin a project with a Raspberry Pi Pico, and Lora Modem, for easily adding sensors, or displays.  Then you can create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
-There are two ways of using this project:  
-1. Creating functions to handle new hardware, and using them in `vSx1280Task`
-2. Creating a task to handle new hardware with functions used in the newly written task
-  
-The second method is recomended, as it is more dynamic and easier to debug. However, it is FOSS code with which you may do as you please.  
+When adding sensors, create a new task for handling each one. With a new task handling new hardware there must be communication between tasks to send a message. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in.
 
-Given a new task has been created to handle new hardware there must be communication between tasks. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in. They are fast and easy to use for sending data between task in a memory efficient manner. 
+In the new task instantiate an 8 bit pointer to store data for sending over SPI:  
 
-In your new task you should create an 8 bit pointer array to store data in an 8 bit format to send through SPI:  
-  
 >```c
-> uint8_t *dataBuffer = 0;
+> uint8_t *dataBuffer = NULL;
 > ```  
   
-Allocate the appropriate amount of memory, in 8 bit chunks, that you'll need to send your data:  
+Allocate the appropriate amount of memory, in 8 bit chunks, that is needed to send your data:  
   
 > ```c
 > dataBuffer = ( uint8_t * ) malloc( 255 * sizeof( uint8_t ) );
 > ```  
   
-Here 255 is used because it's the maximum LoRa packet size on the sx1280.  
-Assign your data to the newly allocated data buffer:  
+  
+Assign your data to the newly allocated data buffer. Here, 255 is used because it's the maximum LoRa packet size on the sx1280:  
   
 >```c
 >*( dataBuffer + 0 ) = 0x48; // 0x48 is ASCII Hexadecimal 'H' 
@@ -90,12 +84,21 @@ Use the [`xTaskNotify()`](https://www.freertos.org/xTaskNotify.html) function to
 > ```c
 > xTaskNotify(  
 >             xSx1280TaskHandle,                  /* TaskHandle_t xTaskToNotify */  
->             ( uint32_t ) &*( dataBuffer ),      /* uint32_t ulValue (int)&buffer[0] */  
+>             ( uint32_t ) dataBuffer,            /* uint32_t ulValue (int)&buffer[0] */  
 >             eSetValueWithoutOverwrite );        /* eNotifyAction eAction */  
 >            )
 > ```
   
 In [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) the [`xTaskNotifyWait()`](https://www.freertos.org/xTaskNotifyWait.html) will accept *Task Notifications* from all tasks that are sending them. You must process the current *Task Notification* before allowing another task to run or the current *Task Notification* may be overwritten by an incoming *Task Notification* from another task.
+
+To use the incoming *Tast Notification*, it must be reassigned to a task local pointer. This template uses a struct containing an 8 bit pointer:
+
+```c
+struct sx1280MessageStorageTillUse{
+  uint8_t *message;
+};
+struct sx1280MessageStorageTillUse messageStorageTillUse = { NULL };
+```
 
 <!-- Forkers
 
@@ -103,13 +106,10 @@ In [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/
 
 ## Issues
 
-![Error](https://img.shields.io/badge/Error-A31B34?style=for-the-badge) `arm-none-eabi-gcc: fatal error: cannot read spec file 'nosys.specs': No such file or directory`
-
-<!-- ![Solution](https://img.shields.io/badge/Solution-5CBA5B?style=for-the-badge) Go to `/usr/bin/local/` delete all files beginning in `arm-none-eabi-` then reinstall the arm toolchain.
-
-**Mac:** `brew install --cask gcc-arm-embedded`
-
-**Linux:** `sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential` -->
+- ![Error](https://img.shields.io/badge/Error-A31B34?style=for-the-badge) `arm-none-eabi-gcc: fatal error: cannot read spec file 'nosys.specs': No such file or directory`
+  - ![Solution](https://img.shields.io/badge/Solution-5CBA5B?style=for-the-badge) Go to `/usr/bin/local/` delete all files beginning in `arm-none-eabi-` then reinstall the arm toolchain.
+    - **Mac:** `brew install --cask gcc-arm-embedded`
+    - **Linux:** `sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential`
 
 <div align="center" dir="auto">
   <a href="https://github.com/cschorn01/raspberry_pi_pico_lora_template">
