@@ -27,7 +27,7 @@
  */
 
 /* FreeRTOS Includes */
-#include "../FreeRTOS-Kernel/include/FreeRTOS.h" /* MUST COME FIRST */
+#include "FreeRTOS.h" /* MUST COME FIRST */
 #include "task.h"     /* RTOS task related API prototypes. */
 #include "queue.h"    /* RTOS queue related API prototypes. */
 #include "timers.h"   /* Software timer related API prototypes. */
@@ -343,35 +343,13 @@ void sx1280Setup( uint8_t standbyMode,
                   uint8_t chirpInvert, 
                   uint8_t *outboundMessage ){
 
-    /* Format For SPI Communication with sx1280 */
-
-    /* Allocate memory for a dynamic array to 
-            send data to sx1280 (writeData) */
-    /* Allocate memory for a dynamic array to 
-            receive data from sx1280 (readData) */
-    /* Add Opcode to first memory byte in writeData */
-    /* Add data in hexadecimal to second, third, etc. 
-            memory byte in writeData for sets, NOP for gets  */
-    /* int spi_write_blocking( spi_inst_t *spi, 
-                               const uint8_t *src,
-                               size_t len ) */
-    /* Deallocate memory for writeData and/or readData */
-
     uint8_t *setupWriteData;
     uint8_t *setupReadData;
     uint32_t payloadLength = 0;
 
-    /* Driving pin 21 low to reset the sx1280 */
-    gpio_put( 21, 0 );
-    asm volatile ("nop \n nop \n nop");
-    gpio_put( 21, 1 );
-
-    /* Waiting till the busy pin is driven low 
-       So the sx1280 is not sent a command while busy
-            Because it wont receive the command */
+    /* Waiting till the busy pin is driven low */
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after reset\n");
     }
 
     /* Setting sx1280 Standby mode */
@@ -382,10 +360,11 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 2*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETSTANDBY\n");
+        // printf("Busy after SETSTANDBY\n");
     }
 
     /* Setting sx1280 Packet Type */
@@ -396,26 +375,28 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 2*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETPACKETTYPE\n");
+        // printf("Busy after SETPACKETTYPE\n");
     }
 
     /* Setting RF Frequency */
     setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
     *( setupWriteData ) = SETRFFREQUENCY;
-    *( setupWriteData + 1 ) = rfFrequency2316; /* rfFrequency[23:16] */
-    *( setupWriteData + 2 ) = rfFrequency158; /* rfFrequency[15:8] */
-    *( setupWriteData + 3 ) = rfFrequency70; /* rfFrequency[7:0] */
+    *( setupWriteData + 1 ) = rfFrequency2316; /* rfFrequency[23:16], bits 23 to 16 */
+    *( setupWriteData + 2 ) = rfFrequency158; /* rfFrequency[15:8], bits 15 to 8 */
+    *( setupWriteData + 3 ) = rfFrequency70; /* rfFrequency[7:0], bits 7 to 0 */
     sx1280Select();
     spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETRFFREQUENCY\n");
+        // printf("Busy after SETRFFREQUENCY\n");
     }
 
     /* Setting Tx and Rx Buffer Base Addresses
@@ -428,10 +409,11 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 3*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETBUFFERBASEADDRESS\n");
+        // printf("Busy after SETBUFFERBASEADDRESS\n");
     }
 
     /* Setting the Modulation Params */
@@ -444,6 +426,7 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
     /* 0x1E Must be written to register 0x0925 for SF5 or SF6 */
     if( spreadingFactor == 0x50 || spreadingFactor == 0x60 ){
 
@@ -456,6 +439,7 @@ void sx1280Setup( uint8_t standbyMode,
         spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
         sx1280Deselect();
         vPortFree( setupWriteData );
+        setupWriteData = NULL;
     }
     /* 0x37 Must be written to register 0x0925 for SF7 or SF8 */
     else if( spreadingFactor == 0x70 || spreadingFactor == 0x80 ){
@@ -469,6 +453,7 @@ void sx1280Setup( uint8_t standbyMode,
         spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
         sx1280Deselect();
         vPortFree( setupWriteData );
+        setupWriteData = NULL;
     }
     /* 0x32 Must be written to register 0x0925 for SF9, SF10, SF11, or SF12 */
     else if( spreadingFactor == 0x90 || spreadingFactor == 0xA0 || spreadingFactor == 0xB0 || spreadingFactor == 0xC0 ){
@@ -482,6 +467,7 @@ void sx1280Setup( uint8_t standbyMode,
         spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
         sx1280Deselect();
         vPortFree( setupWriteData );
+        setupWriteData = NULL;
     }
     /* 0x01 must be written to register 0x093C */
     setupWriteData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
@@ -493,15 +479,16 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 4*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETMODULATIONPARAMS\n");
+        // printf("Busy after SETMODULATIONPARAMS\n");
     }
 
     /* Setting Packet Params */
     while( *( outboundMessage + payloadLength ) != 0x00 ){
-        /* Maximum payloadLength on sx1280 is 255 */
+        /* Maximum payloadLength on sx1280 is 255, PRESET TO MAXIMUM PAYLOAD ALWAYS */
         if( payloadLength > 255 ){
             payloadLength = 255;
             break;
@@ -521,14 +508,15 @@ void sx1280Setup( uint8_t standbyMode,
     spi_write_blocking( spi1, setupWriteData, 8*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( setupWriteData );
+    setupWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETPACKETPARAMS\n");
+        // printf("Busy after SETPACKETPARAMS\n");
     }
 
     /* Testing connecting from pico to sx1280 by writing to and reading from buffer
-       Working output should be "0xStatus 0xStatus 0xFF" */
+       Working output should be "status status FF" */
 
     /* writeData = ( uint8_t * ) pvPortMalloc( 3*sizeof( uint8_t ) );
     *( writeData ) = WRITEBUFFER;
@@ -537,7 +525,8 @@ void sx1280Setup( uint8_t standbyMode,
     sx1280Select();
     spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
     sx1280Deselect();
-    vPortFree( writeData ); */
+    vPortFree( writeData );
+    writeData = NULL; */
 
     /* Must use two NOP's for reads because data is
             returned beginning on the second NOP */
@@ -553,8 +542,9 @@ void sx1280Setup( uint8_t standbyMode,
     sx1280Deselect(); 
     printf( "%X %X %X %X %X\n", *( readData ), *( readData + 1 ), *( readData + 2 ), *( readData + 3 ), *( readData + 4 ) );
     vPortFree( writeData );
-    vPortFree( readData ); */
-
+    writeData = NULL;
+    vPortFree( readData );
+    readData = NULL; */
 }
 
 
@@ -583,10 +573,11 @@ void sx1280Tx( uint8_t power,
     spi_write_blocking( spi1, txWriteData, 3*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETTXPARAMS\n");
+        // printf("Busy after SETTXPARAMS\n");
     }
 
     /* Writing a message to the sx1280 Tx message buffer */
@@ -602,16 +593,18 @@ void sx1280Tx( uint8_t power,
     /* Looping payloadLength times, writing outboundMessage data to WRITEBUFFER command */
     for( i = 0; i <= txPayloadLength; i++ ){
         *( txWriteData + i + 2 ) = *( outboundMessage + i );
-        printf("Outbound Message: 0x%X\n", *( outboundMessage + i ) );
+        printf("Outbound Message: 0x%X %c\n", *( outboundMessage + i), *( outboundMessage + i));
     }
+    printf("Outbound Message Address: 0x%X\n", outboundMessage );
     sx1280Select();
     spi_write_blocking( spi1, txWriteData, ( txPayloadLength+3 )*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after tx WRITEBUFFER\n");
+        // printf("Busy after tx WRITEBUFFER\n");
     }
 
     /* setting IRQ parameters for the outgoing message, looping SPI not DIO pins to check*/
@@ -629,10 +622,11 @@ void sx1280Tx( uint8_t power,
     spi_write_blocking( spi1, txWriteData, 9*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after tx SETDIOIRQPARAMS\n");
+        // printf("Busy after tx SETDIOIRQPARAMS\n");
     }
 
     /* Putting sx1280 in transmit mode to send the message in sx1280's message buffer 
@@ -646,14 +640,15 @@ void sx1280Tx( uint8_t power,
     spi_write_blocking( spi1, txWriteData, 4*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after tx SETTX\n");
+        // printf("Busy after tx SETTX\n");
     }
 
     /* Looping over GETIRQSTATUS using SPI, till TxDone bit is high */
-    for( i = 0; i <= 100; i++){
+    for( i = 0; i <= 25; i++){
 
         vPortFree( txReadData );
         vTaskDelay( 50 );
@@ -668,10 +663,11 @@ void sx1280Tx( uint8_t power,
         spi_write_read_blocking( spi1, txWriteData, txReadData, 4*sizeof( uint8_t ) );
         sx1280Deselect();
         vPortFree( txWriteData );
+        txWriteData = NULL;
  
         while( gpio_get( 22 ) == 1 ){
             vTaskDelay( 10 );
-            printf("Busy after tx GETIRQSTATUS\n");
+            // printf("Busy after tx GETIRQSTATUS\n");
         }
 
         printf("IRQ Check: 0x%X %i\n", *( txReadData + 3 ), i );
@@ -684,6 +680,7 @@ void sx1280Tx( uint8_t power,
 
             printf("IRQ: 0x%X %i \n", *( txReadData + 3 ), i );
             vPortFree( txReadData );
+            txReadData = NULL;
             break;
         }
 
@@ -698,10 +695,11 @@ void sx1280Tx( uint8_t power,
     spi_write_blocking( spi1, txWriteData, 3*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after tx CLRIRQSTATUS\n");
+        // printf("Busy after tx CLRIRQSTATUS\n");
     }
 
     /* Tx SETSANDBY */
@@ -712,13 +710,13 @@ void sx1280Tx( uint8_t power,
     spi_write_blocking( spi1, txWriteData, 2*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( txWriteData );
+    txWriteData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after tx SETSTANDBY\n");
+        // printf("Busy after tx SETSTANDBY\n");
     }
 }
-
 
 /* Function setting up and running rx operation on an sx1280, 2.4Ghz LORA Modem*/
 void sx1280Rx( uint8_t rxIrq158, 
@@ -752,14 +750,14 @@ void sx1280Rx( uint8_t rxIrq158,
     spi_write_blocking( spi1, writeData, 9*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( writeData );
+    writeData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after rx SETDIOIRQPARAMS\n");
+        // printf("Busy after rx SETDIOIRQPARAMS\n");
     }
 
-    /* setting sx1280 to Rx mode
-       Setting Rx mode to continuous, so multiple messages can be received */
+    /* setting sx1280 to Rx mode */
     writeData = ( uint8_t * ) pvPortMalloc( 4*sizeof( uint8_t ) );
     *( writeData ) = SETRX;
     *( writeData + 1 ) = rxPeriodBase; /* Setting the RTC step */
@@ -769,17 +767,34 @@ void sx1280Rx( uint8_t rxIrq158,
     spi_write_blocking( spi1, writeData, 4*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( writeData );
+    writeData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after SETRX\n");
+        // printf("Busy after SETRX\n");
     }
 
-    /* Loop polling 100 times over rx mode
-       Each loop has a 50 clock-tick delay allowing other tasks to run */
-    for( i = 0; i <= 100; i++ ){ 
+    /* Using the GETIRQSTATUS command, the RxDone flag will be set to 1 when
+            a new message has been received 
+       Assuming that the rx buffer is cleared when each new message is received */
+
+    /* Loop polling 100 times over rx mode, 100 is arbitrarily picked 
+       Could try to grab the amount of time the sx1280 will listen for and loop for that many ms
+            Will need conditionals for 0x0000, 0xFFFF, and everything between
+    if( rxPeriodBaseCount158 == 0x00 && rxPeriodBaseCount70 == 0x00 ){ // Single Rx
+
+    }
+    else if( rxPeriodBaseCount158 == 0xFF && rxPeriodBaseCount70 == 0xFF ){ // Continuous Rx
+
+    }
+    else{ // Rx with a timeout
+
+    }
+        */
+    for( i = 0; i <= 25; i++ ){ /* we want to keep listening */
 
         printf("Listening: %i\n", i );
+        vTaskDelay( 50 ); 
         sizeOfMessageInBuffer = 0;
 
         /* Using GETIRQSTATUS to check if there is a new message in the rx buffer */
@@ -793,18 +808,18 @@ void sx1280Rx( uint8_t rxIrq158,
         spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
         sx1280Deselect();
         vPortFree( writeData );
+        writeData = NULL;
 
         /* Checking to see if the RxDone bit in the IRQ register is high, with 0x02 bitmask */
         if( ( *( readData + 3 ) & 0x02 ) == 0x02 ){ /* GETIRQSTATUS RxDone == 1 */
  
             vPortFree( readData );
+            readData = NULL;
 
             while( gpio_get( 22 ) == 1 ){
                 vTaskDelay( 10 );
-                printf("Busy after rx GETIRQSTATUS\n");
+                // printf("Busy after rx GETIRQSTATUS\n");
             }
-
-            /* see what the message is and decide what to do with it */
 
             /* using GETPACKETSTATUS which returns rssiSync, and Signal to Noise Ratio ( SNR )
                Not currently using but it's in sx1280 Documentation for Rx operation
@@ -819,14 +834,16 @@ void sx1280Rx( uint8_t rxIrq158,
             *( writeData + 5 ) = 0x00;
             *( writeData + 6 ) = 0x00;
             sx1280Select();
-            spi_write_read_blocking( spi1, writeData, readData, 4*sizeof( uint8_t ) );
+            spi_write_read_blocking( spi1, writeData, readData, 7*sizeof( uint8_t ) );
             sx1280Deselect();
             vPortFree( writeData );
+            writeData = NULL;
             vPortFree( readData );
+            readData = NULL;
 
             while( gpio_get( 22 ) == 1 ){
                 vTaskDelay( 10 );
-                printf("Busy after rx GETPACKETSTATUS\n");
+                // printf("Busy after rx GETPACKETSTATUS\n");
             }
 
             /* Clearing the IRQ register on the sx1280
@@ -839,10 +856,11 @@ void sx1280Rx( uint8_t rxIrq158,
             spi_write_blocking( spi1, writeData, 3*sizeof( uint8_t ) );
             sx1280Deselect();
             vPortFree( writeData );
+            writeData = NULL;
 
             while( gpio_get( 22 ) == 1 ){
                 vTaskDelay( 10 );
-                printf("Busy after rx CLRIRQSTATUS\n");
+                // printf("Busy after rx CLRIRQSTATUS\n");
             }
 
             /* Getting the length of the newly received message
@@ -860,11 +878,13 @@ void sx1280Rx( uint8_t rxIrq158,
             /* Grabbing message size for correct memory allocation for incoming message */
             sizeOfMessageInBuffer = *( readData + 2 );
             vPortFree( writeData );
+            writeData = NULL;
             vPortFree( readData );
+            readData = NULL;
 
             while( gpio_get( 22 ) == 1 ){
                 vTaskDelay( 10 );
-                printf("Busy after rx READREGISTER\n");
+                // printf("Busy after rx READREGISTER\n");
             }
 
             /* Reading message buffer of sx1280
@@ -883,18 +903,24 @@ void sx1280Rx( uint8_t rxIrq158,
                 /* printf("writeData + j = 0x%X j = %i \n", ( writeData + j + 3 ), j ); */
             }
             sx1280Select();
-            spi_write_read_blocking( spi1, writeData, readData, 
-                                     ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
+            spi_write_read_blocking( spi1, writeData, readData, ( sizeOfMessageInBuffer + 3 )*sizeof( uint8_t ) );
             sx1280Deselect();
             vPortFree( writeData );
-            /* Passing newly received message pointer to vSx1280Task */
-            inboundMessage = readData; 
+            writeData = NULL;
+            vPortFree( inboundMessage );
+            inboundMessage = NULL;
+            inboundMessage = readData; /* Passing received message pointer to vSx1280Task */
+            /* vPortFree( readData );
+            readData = NULL; */
 
             while( gpio_get( 22 ) == 1 ){
                 vTaskDelay( 10 );
-                printf("Busy after rx READBUFFER\n");
+                // printf("Busy after rx READBUFFER\n");
             }
-        vTaskDelay( 50 ); /* 50 clock-tick delay */
+
+            break;
+
+        }
     }
 
     /* Rx SETSANDBY */
@@ -905,10 +931,11 @@ void sx1280Rx( uint8_t rxIrq158,
     spi_write_blocking( spi1, writeData, 2*sizeof( uint8_t ) );
     sx1280Deselect();
     vPortFree( writeData );
+    writeData = NULL;
 
     while( gpio_get( 22 ) == 1 ){
         vTaskDelay( 10 );
-        printf("Busy after rx SETSTANDBY\n");
+        // printf("Busy after rx SETSTANDBY\n");
     }
 }
 
@@ -969,12 +996,19 @@ void sx1280Rp2040Setup( ){
     Also now adding some elements of mesh in */
 void vSx1280Task( void *pvParameters ){
 
-    /* Instantiating pointer variables for dynamic arrays */
-    uint8_t *writeData;
-    uint8_t *readData;
+    /* 8 bit pointer variables for dynamic arrays */
+    uint8_t *writeData = NULL;
+    uint8_t *readData = NULL;
 
-    /* Instantiating pointer for address received from task notification */
-    uint32_t *taskNotificationFromUSB = NULL;
+    /* 32 bit pointer for address received from vUsbIOTask task notification */
+    uint32_t *taskNotificationFromUSB = 0x00;
+
+    struct sx1280MessageStorageTillUse{
+
+        uint8_t *message;
+    };
+    /* Instantiating struct, containing an 8 bit pointer to temporarily store a message */
+    struct sx1280MessageStorageTillUse messageStorageTillUse = { NULL };
 
     sx1280Rp2040Setup();
 
@@ -982,10 +1016,17 @@ void vSx1280Task( void *pvParameters ){
     uint32_t i = 0;
     uint32_t j = 0;
 
+    gpio_put( 21, 0 ); /* Resetting sx1280 during startup, says in documentation FIND PAGE */
+    asm volatile ("nop \n nop \n nop");
+    gpio_put( 21, 1 );
+
     while( true ){
 
-        /* Allocating 4 bytes (32 bits) for the address containing data from vUsbIOTask */
+        /* For some reason this is needed to get the task notification to work
+           Literally breaks program if not here, could be put above but unsure, untested */
         taskNotificationFromUSB = ( uint32_t * ) pvPortMalloc( 1*sizeof( uint32_t ) );
+        *( taskNotificationFromUSB ) = 0x00;
+        vPortFree( taskNotificationFromUSB );
 
         xTaskNotifyWait(
                 0xffffffff,               /* uint32_t ulBitsToClearOnEntry */
@@ -993,18 +1034,20 @@ void vSx1280Task( void *pvParameters ){
                 taskNotificationFromUSB,  /* uint32_t *pulNotificationValue */
                 100 );                    /* TickType_t xTicksToWait */
  
-        if( taskNotificationFromUSB != NULL ){
-            for( uint32_t i = 0; *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) != 0; i++){
-                printf("sx1280TaskNotificationFromUSB = %X %c\n", 
-                       *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ), 
-                       *( ( uint8_t * ) *( taskNotificationFromUSB ) + i ) );
+        if( *( taskNotificationFromUSB ) != 0 ){
+            for( j = 0; *( ( uint8_t * ) *( taskNotificationFromUSB ) + j ) != 0x00; j++){
+                printf("sx1280 task notification = 0x%X %c\n", *( ( uint8_t * ) *( taskNotificationFromUSB ) + j ), *( ( uint8_t * ) *( taskNotificationFromUSB ) + j ) );
             }
+            printf("sx1280 task notification held address: 0x%X\n", *(taskNotificationFromUSB));
+            messageStorageTillUse.message = ( uint8_t * ) *( taskNotificationFromUSB );
         }
 
-        /* Setting up writeData to arbitrarily make the payloadLength value in sx1280Setup 255
+        vTaskDelay( 10 );
+
+        /* Arbitrarily allocating 255 bytes to writeData for payloadLength in sx1280Setup
            Payload length does not matter for messages with headers */
         writeData = ( uint8_t * ) pvPortMalloc( 255*sizeof( uint8_t ) );
-        for( uint32_t i = 0; i <= 254; i++){
+        for( i = 0; i <= 254; i++){
             *( writeData + i ) = 0xFF;
             if( i == 254 ){
                 *( writeData + i ) = 0x00;
@@ -1026,10 +1069,10 @@ void vSx1280Task( void *pvParameters ){
                      writeData );   /* uint8_t *outboundMessage         */
 
         vPortFree( writeData );
+        writeData = NULL;
 
         /* Allocating one byte to readData, send to sx1280Rx to get the packets of a message */
         readData = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
-
         /* Assigning 0 to the 0th element of readData, no incoming message data if still 0 */
         *( readData ) = 0;
 
@@ -1040,58 +1083,62 @@ void vSx1280Task( void *pvParameters ){
                   0xFF,         /* uint8_t rxPeriodBaseCount70      */
                   readData );   /* uint8_t *inboundMessage          */
 
-        /* Checking message for "hi" in hexadecimal ascii in the first three bytes */
-        if( *( readData ) == 0x68 && *( readData + 1 ) == 0x69 ){
-
-            for( uint32_t i = 0; i <= 2; i++ ){
-                printf( "Inbound Message: 0x%X\n", *( readData + i ) );
+        /* Checking received message data */
+        if( *( readData ) != 0x00 && *( readData + 3 ) != 0x00 ){
+            for( i = 3; *( readData + i ) != 0x00; i++){
+                printf("Inbound Message: 0x%X %c %i\n", *( readData + 3 ), *( readData + 3), i);
             }
         }
-        else if( *( readData ) != 0 && ( *( readData + 3 ) != 0x68 && *( readData + 4 ) != 0x69 ) ){
-
-            for( uint8_t i = 0; *( readData + i ) != 0x00; i++ ){
-                printf("Inbound Message: 0x%X\n", *( readData + i ) );
-            }
+        /* Checking readData to ensure there is conversation data, not 0 or RTS */
+        else{
+            printf("No inbound message\n");
         }
-        else if( *( readData ) == 0 ){
 
-            printf("No Inbound Message");
-        }
         vPortFree( readData );
-        vPortFree( taskNotificationFromUSB );
-        /* Explicitly setting taskNotificationFromUSB to NULL 
-           vPortFree() does not set pointer to NULL only frees memory in heap to be reused */
-        taskNotificationFromUSB = NULL;
+        readData = NULL;
 
-        writeData = ( uint8_t * ) pvPortMalloc( 3*sizeof( uint8_t ) );
-        *( writeData ) = 0x68;      /* "h"          */
-        *( writeData + 3 ) = 0x69;  /* "i"          */
-        *( writeData + 4 ) = 0x00;  /* "\0" or NULL */
+        if( messageStorageTillUse.message != NULL ){
 
-        sx1280Setup( 0x00,          /* uint8_t standbyMode              */
-                     0x01,          /* uint8_t packetType               */
-                     0xB8,          /* uint8_t rfFrequency2316          */
-                     0x9D,          /* uint8_t rfFrequency158           */
-                     0x89,          /* uint8_t rfFrequency70            */
-                     0x70,          /* uint8_t spreadingFactor          */
-                     0x0A,          /* uint8_t bandwidth                */
-                     0x01,          /* uint8_t codingRate               */
-                     0x0C,          /* uint8_t preambleLength           */
-                     0x00,          /* uint8_t headerType               */
-                     0x20,          /* uint8_t cyclicalRedundancyCheck  */
-                     0x40,          /* uint8_t chirpInvert              */
-                     writeData );   /* uint8_t *outboundMessage         */
 
-        sx1280Tx( 0x1F,         /* uint8_t power                    */
-                  0xE0,         /* uint8_t rampTime                 */
-                  writeData,    /* uint8_t *outboundMessage         */
-                  0x40,         /* uint8_t txIrq158                 */
-                  0x01,         /* uint8_t txIrq70                  */
-                  0x02,         /* uint8_t txPeriodBase             */
-                  0x01,         /* uint8_t txPeriodBaseCount158     */
-                  0xF4 );       /* uint8_t txPeriodBaseCount70      */
+            /* Looping and printing outbound message till NULL, strings are NULL terminated */
+            for( i = 0; *( messageStorageTillUse.message + i ) != 0x00; i++ ){
+                printf("Outbound Check: 0x%X %c\n", *( messageStorageTillUse.message + i ), *( messageStorageTillUse.message + i ) );
+            }
+            printf("Outbound Check Address: 0x%X\n", messageStorageTillUse.message );
 
-        vPortFree( writeData );
+            /* Allocating 255 bytes for a single LORA Message packet to be sent */
+            writeData = ( uint8_t * ) pvPortMalloc( 255*sizeof( uint8_t ) );
+
+            sx1280Setup( 0x00,          /* uint8_t standbyMode                  */
+                         0x01,          /* uint8_t packetType                   */
+                         0xB8,          /* uint8_t rfFrequency2316              */
+                         0x89,          /* uint8_t rfFrequency158               */
+                         0x9D,          /* uint8_t rfFrequency70                */
+                         0x70,          /* uint8_t spreadingFactor              */
+                         0x0A,          /* uint8_t bandwidth                    */
+                         0x01,          /* uint8_t codingRate                   */
+                         0x0C,          /* uint8_t preambleLength               */
+                         0x00,          /* uint8_t headerType                   */
+                         0x20,          /* uint8_t cyclicalRedundancyCheck      */
+                         0x40,          /* uint8_t chirpInvert                  */
+                         writeData );   /* uint8_t *outboundMessage             */
+
+            sx1280Tx( 0x1F,         /* uint8_t power                    */
+                      0xE0,         /* uint8_t rampTime                 */
+                                    /* uint8_t *outboundMessage         */
+                      messageStorageTillUse.message,    
+                      0x40,         /* uint8_t txIrq158                 */
+                      0x01,         /* uint8_t txIrq70                  */
+                      0x02,         /* uint8_t txPeriodBase             */
+                      0x01,         /* uint8_t txPeriodBaseCount158     */
+                      0xF4 );       /* uint8_t txPeriodBaseCount70      */
+
+            vPortFree( writeData );
+            writeData = NULL;
+            vPortFree( messageStorageTillUse.message );
+            messageStorageTillUse.message = NULL;
+        }
+        vTaskDelay( 10 );
     }
 }
 
@@ -1117,7 +1164,7 @@ void vSimpleLEDTask( void *pvParameters ){
         buffer holding the message to be sent from the sx1280 */
 void vUsbIOTask( void *pvParameters ){
 
-    uint8_t currentChar = 0; /* 8 bit integer to hold hex value from getchar() */
+    uint8_t currentChar = 0x00; /* 8 bit integer to hold hex value from getchar() */
 
     uint8_t *messageBuffer = NULL; /* 8 bit pointer to hold outgoing message */
     uint8_t *messageBufferRealloc = NULL; /* 8 bit pointer for dynamic message input */
@@ -1133,10 +1180,45 @@ void vUsbIOTask( void *pvParameters ){
 
     while( true ){
 
-        /* Setting currentChar to the character being read in by getChar() */
-        currentChar = getchar();
-        /* Checking to see if the character being read in is not "\n" */
-        if( currentChar != 0x0A ){
+        /* Setting currentChar to the character being read in by getchar() */
+        currentChar = getchar_timeout_us( 1000 );
+
+        /* Checking currentChar for the error code 0xFF, isn't on the ascii keyboard, < 0x20,
+           and isn't a new line character */
+        if( currentChar == 0xFF || ( currentChar < 0x20 && currentChar != 0x0A ) ){
+            currentChar = 0x00;
+        }
+
+        /* Checking if the character being read in is "\n" */
+        if( currentChar == 0x0A ){ 
+
+            messageBufferRealloc = messageBuffer;
+            /* An extra byte is added to messageBuffer for "0x00", NULL terminated strings */
+            messageBuffer = ( uint8_t * ) pvPortMalloc( ( messageCounter+2 )*sizeof( uint8_t ));
+            for( i = 0; i <= messageCounter; i++ ){
+                *( messageBuffer + i ) = *( messageBufferRealloc + i );
+            }
+            /* Adding currentChar to the last cell in the pointer array */
+            *( messageBuffer + messageCounter ) = currentChar;
+            *( messageBuffer + messageCounter + 1 ) = 0x00; 
+            vPortFree( messageBufferRealloc ); /* Freeing reallocation holder pointer */
+            messageBufferRealloc = NULL;
+            for( i = 0; i <= messageCounter + 1; i++ ){
+                printf( "Typed Message: 0x%X %c %i\n", *( messageBuffer + i ), *( messageBuffer + i ), i );
+            }
+            printf("Typed Message Address: 0x%X\n", messageBuffer );
+
+            /* FreeRTOS function updating a receiving task’s notification value */
+            xTaskNotify(
+                xSx1280TaskHandle,                /* TaskHandle_t xTaskToNotify */ 
+                ( uint32_t ) messageBuffer,       /* uint32_t ulValue, (int)&buffer[0] */
+                eSetValueWithoutOverwrite );      /* eNotifyAction eAction */
+
+            vTaskDelay( 500 ); /* To allow other tasks time to grab the notification values */
+            messageBuffer = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
+            messageCounter = 0;
+        }
+        else if( currentChar != 0x0A && currentChar != 0x00 ){ /* if the character being read in is not "\n" */
             /* Increasing messageBuffer size until "/n"
                messageCounter is indexed from 0, add one for correct sized message */
             messageBufferRealloc = messageBuffer;
@@ -1146,36 +1228,11 @@ void vUsbIOTask( void *pvParameters ){
             }
             /* Adding currentChar to the last cell in the pointer array */
             *( messageBuffer + messageCounter ) = currentChar;
-            messageCounter = messageCounter + 1; /* Incrementing the value of messageCounter */
-            vPortFree( messageBufferRealloc ); /* Freeing reallocation holder pointer */
+            messageCounter = messageCounter + 1;
+            vPortFree( messageBufferRealloc );
+            messageBufferRealloc = NULL;
         }
-        else if( currentChar == 0x0A ){ /* Checking if the character being read in is "\n" */
-
-            messageBufferRealloc = messageBuffer;
-            /* An extra 8 bits is added to messageBuffer for "0x00", NULL terminated strings */
-            messageBuffer = ( uint8_t * ) pvPortMalloc( ( messageCounter+2 )*sizeof( uint8_t ));
-            for( i = 0; i <= messageCounter; i++ ){
-                *( messageBuffer + i ) = *( messageBufferRealloc + i );
-            }
-            /* Adding currentChar to the last cell in the pointer array */
-            *( messageBuffer + messageCounter ) = currentChar;
-            *( messageBuffer + messageCounter + 1 ) = 0x00; 
-            vPortFree( messageBufferRealloc ); /* Freeing reallocation holder pointer */
-
-            for( i= 0; i<= messageCounter + 1; i++ ){
-                printf( "Typed Message: 0x%X %c\n", *( messageBuffer + i ), 
-                                                    *( messageBuffer + i ) );
-            }
-
-            xTaskNotify(
-                xSx1280TaskHandle,                /* TaskHandle_t xTaskToNotify */ 
-                ( uint32_t ) &*( messageBuffer ), /* uint32_t ulValue, (int)&buffer[0] */
-                eSetValueWithoutOverwrite );      /* eNotifyAction eAction */
-
-            messageCounter = 0;/* Setting messageCounter to 0 for new message to be taken in */
-            messageBuffer = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
-        }
-
+        currentChar = 0x00;
         vTaskDelay( 10 );
     }
 }
@@ -1216,4 +1273,6 @@ int main( void ){
     while( true ){
 
     }
+
+    return 0;
 }
