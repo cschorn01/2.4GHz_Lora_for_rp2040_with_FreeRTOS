@@ -111,7 +111,7 @@ struct sx1280MessageStorageTillUse messageStorageTillUse = { NULL };
     - **Windows:** [Pico Setup for Windows](https://github.com/raspberrypi/pico-setup-windows)
 
 <div align="center" dir="auto">
-  <a href="https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/main/README.md#raspberry-pi-pico-lora-template">
+  <a href="https://github.com/cschorn01/raspberry_pi_pico_lora_template">
     <img src="https://img.shields.io/badge/Back_To_Top-FFFFFF?style=for-the-badge" alt="Back To Top">
   </a>
 </div>
