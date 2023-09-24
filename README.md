@@ -106,8 +106,9 @@ struct sx1280MessageStorageTillUse messageStorageTillUse = { NULL };
 
 - ![Error](https://img.shields.io/badge/Error-A31B34?style=for-the-badge) `arm-none-eabi-gcc: fatal error: cannot read spec file 'nosys.specs': No such file or directory`
   - ![Solution](https://img.shields.io/badge/Solution-5CBA5B?style=for-the-badge) Go to `/usr/bin/local/` delete all files beginning in `arm-none-eabi-` then reinstall the arm toolchain.
-    - **Mac:** `brew install --cask gcc-arm-embedded`
     - **Linux:** `sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential`
+    - **Mac:** `brew install --cask gcc-arm-embedded`
+    - **Windows:** [Pico Setup for Windows](https://github.com/raspberrypi/pico-setup-windows)
 
 <div align="center" dir="auto">
   <a href="https://github.com/cschorn01/raspberry_pi_pico_lora_template">
