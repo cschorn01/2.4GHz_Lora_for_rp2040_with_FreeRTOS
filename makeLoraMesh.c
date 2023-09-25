@@ -10,7 +10,7 @@ int main( void ){
     system( "rm -r build" );
     system( "mkdir build" );
     // system( 'cmake from 'build' into 'rp2040-freertos'')
-    system( "cmake -D FREERTOS_KERNEL_PATH=/Users/christopherschorn/Documents/Network/pico_projects/rp2040-freetros-github-copy/FreeRTOS-Kernel -D PICO_SDK_PATH=/Users/christopherschorn/Documents/Network/pico_projects/pico-sdk -B ./build" );
+    system( "cmake -D FREERTOS_KERNEL_PATH=/Absolute-Path-To/FreeRTOS-Kernel -D PICO_SDK_PATH=/Absolute-Path-To/pico-sdk -B ./build" );
     // system( 'make from 'build'') -C DIRECTORY, Change to DIRECTORY before doing anything.
     system( "make -C build" );
 
