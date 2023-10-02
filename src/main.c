@@ -1001,7 +1001,7 @@ void vSx1280Task( void *pvParameters ){
     uint8_t *readData = NULL;
 
     /* 32 bit pointer for address received from vUsbIOTask task notification */
-    uint32_t *taskNotificationFromUSB = 0x00;
+    uint32_t *taskNotificationFromUSB = ( uint32_t * ) pvPortMalloc( 1*sizeof( uint32_t ) );
 
     struct sx1280MessageStorageTillUse{
 
@@ -1021,12 +1021,6 @@ void vSx1280Task( void *pvParameters ){
     gpio_put( 21, 1 );
 
     while( true ){
-
-        /* For some reason this is needed to get the task notification to work
-           Literally breaks program if not here, could be put above but unsure, untested */
-        taskNotificationFromUSB = ( uint32_t * ) pvPortMalloc( 1*sizeof( uint32_t ) );
-        *( taskNotificationFromUSB ) = 0x00;
-        vPortFree( taskNotificationFromUSB );
 
         xTaskNotifyWait(
                 0xffffffff,               /* uint32_t ulBitsToClearOnEntry */
