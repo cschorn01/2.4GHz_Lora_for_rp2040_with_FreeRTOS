@@ -12,11 +12,11 @@
 [![Semtech LoRa](https://img.shields.io/badge/LoRa-1CAEED?style=for-the-badge)](https://www.semtech.com/lora)
 [![FreeRTOS](https://img.shields.io/badge/FreeRTOS-5CBA5B?style=for-the-badge)](https://www.freertos.org/)
 
-[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/main#-0)
-[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-1)
-[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-2)
-[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-3)
-[![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-4)
+[![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/main#-1)
+[![Functionality](https://img.shields.io/badge/Functionality-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-2)
+[![File Structure](https://img.shields.io/badge/file_structure-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-3)
+[![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-4)
+[![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-5)
 
 [![Stargazers repo roster for @cschorn01/raspberry_pi_pico_lora_template](https://reporoster.com/stars/cschorn01/raspberry_pi_pico_lora_template)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/stargazers)
 
