@@ -18,8 +18,6 @@
 [![How to Use](https://img.shields.io/badge/how_to_use-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-3)
 [![Issues](https://img.shields.io/badge/issues-FFFFFF?style=for-the-badge)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/tree/main#-4)
 
-[![Stargazers repo roster for @cschorn01/raspberry_pi_pico_lora_template](https://reporoster.com/stars/cschorn01/raspberry_pi_pico_lora_template)](https://github.com/cschorn01/raspberry_pi_pico_lora_template/stargazers)
-
 <!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=cschorn01/raspberry_pi_pico_lora_template) -->
 
 <!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/raspberry_pi_pico_lora_template) -->
