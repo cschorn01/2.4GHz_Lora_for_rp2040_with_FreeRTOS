@@ -31,7 +31,7 @@ The **raspberry_pi_pico_lora_template** is an open source project based on the [
 This project uses a Raspberry Pi Pico's SPI bus to communicate with a 2.4GHz LoRa radio. With FreeRTOS we can create a new task, or individually addressable superloop, that interacts with the [`vSx1280Task`](https://github.com/cschorn01/raspberry_pi_pico_lora_template/blob/44e7e5acd0a1cb4129e875321e36d574b70024c7/src/main.c#L970C6-L970C6) independently. 
 
 In this project there are three tasks, and main():
-1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED to action in the infinite loop.
+1. `vSimpleLEDTask` is to show the structure of a task with *setup* above an infinite loop, and the blinking of the onboard pico LED in the infinite loop.
 2. `vUsbIOTask` takes typed input from a serial monitor over usb. An unsigned 8 bit pointer array is used as a dynamic ascii character array for a 'string', which is NULL terminated. The address of the pointer array is then sent to `vSx1280Task` to send over LoRa.
 3. `vSx1280Task` receives the address of the pointer array from `vUsbIOTask` through a *Task Notification* and reassigns the address to a task local pointer. This is done because there are functions called which delay `vSx1280Task` and would allow `vUsbIOTask` to overwrite the address passed by *Task Notifications*. Once the data is task local `vSx1280Task` will perform a Tx operation, followed by an Rx operation. Both operations are done by using the `sx1280Setup`, `sx1280Tx`, and `sx1280Rx` functions, also in `main.c`.
 
