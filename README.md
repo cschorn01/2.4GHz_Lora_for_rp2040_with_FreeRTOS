@@ -54,7 +54,7 @@ In this project there are three tasks, and main():
 
 This project is a template to begin a project with a Raspberry Pi Pico, and Lora Modem, for easily adding sensors, or displays.  Then you can create your own long range wireless [Internet of Things](https://en.wikipedia.org/wiki/Internet_of_things) network.  
 
-When adding sensors, create a new task for handling each one. With a new task handling new hardware there must be communication between tasks. Thats where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in.
+When adding sensors, create a new task for handling each one. With a new task handling new hardware there must be communication between tasks, which is where [FreeRTOS Task Notifications](https://www.freertos.org/RTOS-task-notifications.html) come in.
 
 In the new task instantiate an 8 bit pointer to store data for sending over SPI:  
 
