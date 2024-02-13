@@ -49,6 +49,7 @@
 
 /* Raspberry Pi Pico Inlcudes */
 #include <stdio.h> 
+#include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 #include "hardware/spi.h"
@@ -71,8 +72,8 @@ static TaskHandle_t xSx1280TaskHandle = NULL;
 void vSx1280Task( void *pvParameters ){
 
     /* 8 bit pointer variables for dynamic arrays */
-    uint8_t *writeData = NULL;
-    uint8_t *readData = NULL;
+    uint8_t writeData[ 256 ] = { 0 };
+    uint8_t readData[ 256 ] = { 0 };
 
     /* 32 bit pointer for address received from vUsbIOTask task notification */
     uint32_t *taskNotificationFromUSB = ( uint32_t * ) pvPortMalloc( 1*sizeof( uint32_t ) );
@@ -85,11 +86,11 @@ void vSx1280Task( void *pvParameters ){
     /* Lora Structs */
     struct sx1280MessageStorageTillUse{
 
-        uint8_t *message;
+        uint8_t message[ 256 ];
     };
 
     /* Instantiating struct, containing an 8 bit pointer to temporarily store a message */
-    struct sx1280MessageStorageTillUse messageStorageTillUse = { NULL };
+    struct sx1280MessageStorageTillUse messageStorageTillUse = { { 0 } };
 
     /* Initalizing unsigned 8 bit integers to store the pin assignments for the sx1280 */
     uint8_t sx1280BusyPin = 22;
@@ -127,6 +128,8 @@ void vSx1280Task( void *pvParameters ){
 
         /* Asserting messageStorageTillUse array of structs is empty beginning the super loop */
         isMessageStorageTillUseEmpty = 1;
+        *( taskNotificationFromUSB ) == 0;
+
 
         xTaskNotifyWait(
                 0xffffffff,               /* uint32_t ulBitsToClearOnEntry */
@@ -139,7 +142,7 @@ void vSx1280Task( void *pvParameters ){
                 printf("sx1280 task notification = 0x%X %c\n", *( ( uint8_t * ) *( taskNotificationFromUSB ) + j ), *( ( uint8_t * ) *( taskNotificationFromUSB ) + j ) );
             }
             printf("sx1280 task notification held address: 0x%X\n", *(taskNotificationFromUSB));
-            messageStorageTillUse.message = ( uint8_t * ) *( taskNotificationFromUSB );
+            memcpy( messageStorageTillUse.message, ( uint8_t * ) *( taskNotificationFromUSB ), 256 );
         }
 
         vTaskDelay( 10 );
@@ -147,10 +150,9 @@ void vSx1280Task( void *pvParameters ){
         if( messageStorageTillUse.message == NULL ){
             /* Arbitrarily allocating 255 bytes to writeData for payloadLength in sx1280Setup
                Payload length does not matter for messages with headers */
-            writeData = ( uint8_t * ) pvPortMalloc( 255*sizeof( uint8_t ) );
-            for( i = 0; i <= 254; i++){
+            for( i = 0; i <= 255; i++){
                 *( writeData + i ) = 0xFF;
-                if( i == 254 ){
+                if( i == 255 ){
                     *( writeData + i ) = 0x00;
                 }
             }
@@ -171,15 +173,11 @@ void vSx1280Task( void *pvParameters ){
                          sx1280ResetPin,        /* uint8_t setupResetPin            */
                          sx1280BusyPin,         /* uint8_t setupBusyPin             */
                          sx1280SpiNumber,       /* uint8_t setupSpiNumber           */
-                         writeData );           /* uint8_t *outboundMessage         */
+                         writeData );           /* uint8_t outboundMessage[ ]       */
 
-            vPortFree( writeData );
-            writeData = NULL;
 
-            /* Allocating one byte to readData, send to sx1280Rx to get the packets of a message */
-            readData = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
-            /* Assigning 0 to the 0th element of readData, no incoming message data if still 0 */
-            *( readData ) = 0;
+            /* Assigning 0 to 0th element of readData, no incoming message data if still 0 */
+            memset( readData, 0, 256 );
 
             sx1280Rx( 0x40,                 /* uint8_t rxIrq158                 */
                       0x7E,                 /* uint8_t rxIrq70                  */
@@ -189,28 +187,24 @@ void vSx1280Task( void *pvParameters ){
                       sx1280ChipSelectPin,  /* uint8_t rxChipSelectPin          */
                       sx1280BusyPin,        /* uint8_t rxBusyPin                */
                       sx1280SpiNumber,      /* uint8_t rxSpiNumber              */
-                      readData );           /* uint8_t *inboundMessage          */
+                      readData );           /* uint8_t inboundMessage[ ]        */
 
-            /* Checking message for "RTS" message in hexadecimal ascii in the first three bytes */
+            /* If there are not 0's in the first two spots of the readData array */
             if( *( readData ) != 0x00 && *( readData + 1 ) != 0x00 ){
-                for( i = 3; *( readData + i ) != 0x00; i++){
-                    printf("Inbound Message: 0x%X %c %i\n", *( readData + 3 ), *( readData + 3), i);
+
+                for( i = 3; *( readData + i ) != 0x00; i++){ /* Looping and printing readData */
+                    printf("Inbound Message: 0x%X %c %i\n", *(readData + 3), *(readData +3), i);
                 }
+                memset( writeData, 0, 256 );
             }
-            /* Checking readData to ensure there is conversation data, not 0 or RTS */
+            /* Otherwise no inbound message */
             else{
+
                 printf("No inbound message\n");
             }
-            /* Checking readData to ensure there is conversation data, not 0 or RTS */
-
-            vPortFree( readData );
-
-
-
         }
-        else if( messageStorageTillUse.message != NULL ){ 
+        else if( messageStorageTillUse.message[ 0 ] != 0 ){ 
 
-            writeData = ( uint8_t * ) pvPortMalloc( 5*sizeof( uint8_t ) );
             *( writeData ) = 0x52;      /* R */
             *( writeData + 1 ) = 0x54;  /* T */
             *( writeData + 2 ) = 0x52;  /* R */
@@ -234,11 +228,11 @@ void vSx1280Task( void *pvParameters ){
                          sx1280ResetPin,        /* uint8_t setupResetPin                */
                          sx1280BusyPin,         /* uint8_t setupBusyPin                 */
                          sx1280SpiNumber,       /* uint8_t setupSpiNumber               */
-                         writeData );           /* uint8_t *outboundMessage             */ 
+                         writeData );           /* uint8_t outboundMessage[ ]           */ 
 
             sx1280Tx( 0x1F,                 /* uint8_t power                    */
                       0xE0,                 /* uint8_t rampTime                 */
-                      writeData,            /* uint8_t *outboundMessage         */
+                      writeData,            /* uint8_t outboundMessage[ ]       */
                       0x40,                 /* uint8_t txIrq158                 */
                       0x01,                 /* uint8_t txIrq70                  */
                       0x02,                 /* uint8_t txPeriodBase             */
@@ -248,8 +242,7 @@ void vSx1280Task( void *pvParameters ){
                       sx1280BusyPin,        /* uint8_t txBusyPin                */
                       sx1280SpiNumber );    /* uint8_t txSpiNumber              */
 
-            vPortFree( writeData );
-            writeData = NULL;
+            memset( writeData, 0, 256 );
         }
 
         vTaskDelay( 10 );
@@ -283,19 +276,19 @@ void vUsbIOTask( void *pvParameters ){
 
     uint8_t currentChar = 0x00; /* 8 bit integer to hold hex value from getchar() */
 
-    uint8_t *messageBuffer = NULL; /* 8 bit pointer to hold outgoing message */
-    uint8_t *messageBufferRealloc = NULL; /* 8 bit pointer for dynamic message input */
+    uint8_t messageBuffer[ 256 ] = { 0 }; /* 8 bit pointer to hold outgoing message */
 
     /* 32 bit integer for placing input characters in the correct places in messageBuffer */
     uint32_t messageCounter = 0;
-
-    /* Allocating single byte to messageBuffer, done before realloc is called */
-    messageBuffer = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
 
     /* Iterators */
     uint32_t i = 0;
 
     while( true ){
+
+        vTaskDelay( 10 );
+
+        currentChar = 0x00; /* Resetting the character read in from usb serial */
 
         /* Setting currentChar to the character being read in by getchar() */
         currentChar = getchar_timeout_us( 1000 );
@@ -306,58 +299,43 @@ void vUsbIOTask( void *pvParameters ){
             currentChar = 0x00;
         }
 
-        /* Checking if the character being read in is "\n" */
-        if( currentChar == 0x0A ){ 
-
-            messageBufferRealloc = messageBuffer;
-            /* An extra byte is added to messageBuffer for "0x00", NULL terminated strings */
-            messageBuffer = ( uint8_t * ) pvPortMalloc( ( messageCounter+2 )*sizeof( uint8_t ));
-            for( i = 0; i <= messageCounter; i++ ){
-                *( messageBuffer + i ) = *( messageBufferRealloc + i );
-            }
-            /* Adding currentChar to the last cell in the pointer array */
-            *( messageBuffer + messageCounter ) = currentChar;
-            *( messageBuffer + messageCounter + 1 ) = 0x00; 
-            vPortFree( messageBufferRealloc ); /* Freeing reallocation holder pointer */
-            messageBufferRealloc = NULL;
-            /* for( i = 0; i <= messageCounter + 1; i++ ){
-                printf( "Typed Message: 0x%X %c %i\n", *( messageBuffer + i ), *( messageBuffer + i ), i );
-            }
-            printf("Typed Message Address: 0x%X\n", messageBuffer );
-            printf("32 Bit Typed Message Address: 0x%X\n", ( uint32_t ) messageBuffer ); */
-            /* printf("vUsbIOTask STACK HWM: %i\n", uxTaskGetStackHighWaterMark( NULL ) ); */
-
-            /* FreeRTOS function updating a receiving task’s notification value 
-               Nolan Roth helped pay in marinara*/
-            xTaskNotify(
-                xSx1280TaskHandle,                /* TaskHandle_t xTaskToNotify */ 
-                ( uint32_t ) messageBuffer, /* &*( )uint32_t ulValue, (int)&buffer[0] */
-                eSetValueWithoutOverwrite );      /* eNotifyAction eAction */
-
-            vTaskDelay( 5000 ); /* To allow other tasks time to grab the notification values */
-            // vPortFree( messageBuffer ); 
-            // messageBuffer = NULL; 
-            messageBuffer = ( uint8_t * ) pvPortMalloc( 1*sizeof( uint8_t ) );
-            messageCounter = 0;
-        }
-        /* if the character being read in is not "\n" */
-        else if( currentChar != 0x0A && currentChar != 0x00 ){ 
-            /* Increasing messageBuffer size until "/n"
-               messageCounter is indexed from 0, add one for correctly sized message */
-            messageBufferRealloc = messageBuffer;
-            messageBuffer = ( uint8_t * ) pvPortMalloc( ( messageCounter+1 )*sizeof( uint8_t ));
-            for( i = 0; i <= messageCounter; i++ ){
-                *( messageBuffer + i ) = *( messageBufferRealloc + i );
-            }
-            /* Adding currentChar to the last cell in the pointer array */
+        /* if character read isn't "\n", and 0x00, and less than 255 characters, index 1,
+                keeping the 256th character, index 1, open for NULL, or 0x00, terminated string
+           messageCounter is indexed from 0 to work with C arrays */
+        if( currentChar != 0x0A && currentChar != 0x00 && messageCounter <= 254 ){ 
+            /* Adding currentChar to messageBuffer at messageCounter */
             *( messageBuffer + messageCounter ) = currentChar;
             messageCounter = messageCounter + 1; /* Incrementing the value of messageCounter */
-            vPortFree( messageBufferRealloc ); /* Freeing reallocation holder pointer */
-            messageBufferRealloc = NULL;
         }
+        /* Checking if the character being read in is "\n" */
+        else if( currentChar == 0x0A && messageCounter <= 254 ){ 
 
-        currentChar = 0x00;
-        vTaskDelay( 10 );
+            /* Adding currentChar to the last cell in the pointer array */
+            *( messageBuffer + 255 ) = 0x00; /* Adding 0x00 to NULL terminate input string */
+
+            /* for( i = 0; i <= 255; i++ ){
+                printf( "Typed Message: 0x%X %c %i\n", *( messageBuffer + i ), *( messageBuffer + i ), i );
+            } */
+
+
+            /* Checking messageBuffer to see if it begins with "SD:"
+               Messages begining with "SD:" are SD commands to be sent to vSdCardTask */
+
+            /* FreeRTOS function updating a receiving task’s notification value */
+            xTaskNotify(
+                xSx1280TaskHandle,                /* TaskHandle_t xTaskToNotify */ 
+                ( uint32_t ) messageBuffer,       /* (int)&buffer[0] */
+                eSetValueWithoutOverwrite );      /* eNotifyAction eAction */
+
+            vTaskDelay( 2000 ); /* To allow other tasks time to grab the notification values */
+            memset( messageBuffer, 0, 256 ); /* Reassign all values in messageBuffer to 0 */
+            messageCounter = 0; /* Reassign messageCounter to 0 to restart input cycle */
+        }
+        else if( messageCounter > 254 ){ /* if the message is more than 255 characters */
+
+            printf( "Message is too large, must be 255 characters or less! Try Again\n" );
+            messageCounter = 0;
+        }
     }
 }
 
