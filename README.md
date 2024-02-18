@@ -22,6 +22,9 @@
 
 <!-- [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=cschorn01&layout=compact&theme=dark)](https://github.com/cschorn01/2.4GHz_Lora_for_rp2040_with_FreeRTOS) -->
 
+[![Stargazers repo roster for @cschorn01/2.4GHz_Lora_for_rp2040_with_FreeRTOS](https://reporoster.com/stars/cschorn01/2.4GHz_Lora_for_rp2040_with_FreeRTOS)](https://github.com/cschorn01/2.4GHz_Lora_for_rp2040_with_FreeRTOS/stargazers)
+
+
 ## ![Description](https://img.shields.io/badge/Description-FFFFFF?style=for-the-badge)
 
 The **2.4GHz_Lora_for_rp2040_with_FreeRTOS** is an open source project based on the [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/), [Lora Radio](https://www.semtech.com/products/wireless-rf/lora-connect/sx1280), and [FreeRTOS](https://www.freertos.org/). It's goal is to give hobbyists and developers a strong starting point for their projects involving Lora. This project uses the [PHY layer](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) of the LoRa radio, with [LoRaWAN](https://lora-developers.semtech.com/documentation/tech-papers-and-guides/lora-and-lorawan) functionality coming.
